@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100 роз</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Manrope:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#14090d;--accent:#ff6b86;--text:#f8eaee;--muted:#b9959f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:radial-gradient(ellipse at 50% 40%,#3b1420 0%,var(--bg) 70%);color:var(--text);
+       font-family:'Manrope',sans-serif;overflow:hidden}
+  #petals{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+  .petal{position:absolute;top:-30px;width:14px;height:10px;border-radius:80% 0 80% 0;
+         background:linear-gradient(135deg,#ff7a93,#9c0f2b);animation:fall linear forwards}
+  @keyframes fall{to{transform:translate(var(--dx),110vh) rotate(var(--rot))}}
+  .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+          justify-content:center;padding:20px;transition:opacity 1s;z-index:1}
+  .hidden{opacity:0;pointer-events:none}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(2.2rem,6.5vw,4.2rem);
+     text-align:center;line-height:1.15}
+  h1 em{color:var(--accent)}
+  .sub{color:var(--muted);margin:20px 0 36px;text-align:center;font-weight:300;line-height:1.8}
+  button{font-family:inherit;cursor:pointer;border:1px solid var(--accent);background:transparent;
+         color:var(--text);padding:13px 30px;border-radius:999px;font-size:1rem;transition:.3s}
+  button:hover{background:var(--accent);color:var(--bg)}
+  .hint{color:var(--muted);font-size:.9rem;text-align:center;margin-bottom:10px;font-weight:300}
+  #bouquet{position:relative;width:var(--size);height:var(--size)}
+  .rose{position:absolute;transform:translate(-50%,-50%);cursor:pointer}
+  .rose svg{width:100%;height:100%;display:block;transform:rotate(var(--r)) scale(.5);
+            filter:brightness(.45) saturate(.7);
+            transition:transform 1.4s cubic-bezier(.2,.8,.25,1.15),filter 1.4s}
+  .rose:hover svg{transform:rotate(var(--r)) scale(.62);filter:brightness(.75)}
+  .rose.open svg{transform:rotate(calc(var(--r) + 45deg)) scale(1);
+                 filter:drop-shadow(0 3px 5px rgba(0,0,0,.55))}
+  .counter{font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-top:10px}
+  .counter b{color:var(--accent);font-weight:600}
+  #letterBtn{margin-top:12px}
+  .modal{position:fixed;inset:0;background:rgba(10,3,6,.7);backdrop-filter:blur(4px);z-index:4;
+         display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s}
+  .card{position:relative;width:min(540px,100%);background:linear-gradient(160deg,#3a1520,#1f0b11);
+        border:1px solid rgba(255,107,134,.25);border-radius:24px;padding:44px 30px 32px;text-align:center;
+        transform:translateY(0);transition:transform .6s}
+  .modal.hidden .card{transform:translateY(20px)}
+  .x{position:absolute;top:12px;right:14px;border:none;font-size:1.6rem;padding:4px 10px;color:var(--muted)}
+  .x:hover{background:none;color:var(--text)}
+  .num{font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:.3em;color:var(--accent)}
+  .reason{font-family:'Cormorant Garamond',serif;font-size:clamp(1.35rem,4vw,1.8rem);margin:20px 0;line-height:1.4}
+  .quote{font-style:italic;color:var(--muted);font-size:.95rem;border-left:2px solid var(--accent);
+         padding-left:12px;text-align:left;margin:0 auto 6px;max-width:92%}
+  .date{color:var(--muted);font-size:.8rem;margin:12px 0 24px;letter-spacing:.1em}
+  .letter{max-width:620px;font-family:'Cormorant Garamond',serif;font-size:1.35rem;line-height:1.65;
+          text-align:center;white-space:pre-line;margin-bottom:32px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <radialGradient id="pg" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="50">
+      <stop offset="0" stop-color="#4a0312"/>
+      <stop offset=".45" stop-color="#a80f2e"/>
+      <stop offset="1" stop-color="#ff5e7c"/>
+    </radialGradient>
+  </defs>
+</svg>
+<div id="petals"></div>
+
+<section class="screen" id="intro">
+  <h1><span id="cnt">100</span> роз —<br><em>100 причин</em>,<br>почему я тебя люблю</h1>
+  <p class="sub" id="sub"></p>
+  <button id="startBtn">Войти в сад 🌹</button>
+</section>
+
+<section class="screen hidden" id="garden">
+  <p class="hint">Нажимай на бутоны: каждый распускается и хранит одну причину</p>
+  <div id="bouquet"></div>
+  <p class="counter" id="counter"></p>
+  <button id="letterBtn" class="hidden">Открыть письмо ♥</button>
+</section>
+
+<div class="modal hidden" id="modal">
+  <div class="card">
+    <button class="x" id="closeBtn">×</button>
+    <div class="num" id="num"></div>
+    <p class="reason" id="reason"></p>
+    <p class="quote" id="quote"></p>
+    <p class="date" id="date"></p>
+    <button id="nextBtn">Следующая роза →</button>
+  </div>
+</div>
+
+<section class="screen hidden" id="final">
+  <p class="letter" id="letter"></p>
+  <button id="backBtn">Вернуться к розам</button>
+</section>
+
+<script>
+/* ============ ЗАПОЛНИТЬ ============ */
+const HER_NAME    = "Имя";
+const MY_CITY     = "";          // например "Атырау"
+const HER_CITY    = "";          // например "Москва"
+const DISTANCE_KM = "";          // например "2 300"
+const START_DATE  = "";          // дата начала отношений, формат "2021-11-23"
+const LETTER = `Здесь будет твоё письмо ей.
+Напишем его вместе.`;
+
+const REASONS = [
+  { text: "Пример: потому что ты пишешь мне «доброе утро», даже когда сама не выспалась.",
+    quote: "доброе утро, соня ☀️", date: "12.03.2022" },
+  { text: "Пример: потому что даже через тысячи километров я чувствую тебя рядом.",
+    quote: "", date: "" },
+];
+/* =================================== */
+
+const TOTAL = 100;
+while (REASONS.length < TOTAL)
+  REASONS.push({ text: "Эта причина скоро появится 🌹", quote: "", date: "" });
+
+const $ = id => document.getElementById(id);
+let opened = new Set(), current = 0;
+try { opened = new Set(JSON.parse(localStorage.getItem("roses-opened") || "[]")); } catch(e) {}
+const save = () => { try { localStorage.setItem("roses-opened", JSON.stringify([...opened])); } catch(e) {} };
+
+/* --- подпись на первом экране --- */
+const parts = ["для " + HER_NAME];
+if (MY_CITY && HER_CITY) parts.push(MY_CITY + " ♥ " + HER_CITY + (DISTANCE_KM ? " · " + DISTANCE_KM + " км" : ""));
+if (START_DATE) {
+  const days = Math.floor((Date.now() - new Date(START_DATE)) / 86400000);
+  if (days > 0) parts.push("вместе уже " + days.toLocaleString("ru-RU") + " дней");
+}
+$("sub").innerHTML = parts.map(p => p.replace(/</g, "&lt;")).join("<br>");
+$("cnt").textContent = TOTAL;
+$("letter").textContent = LETTER;
+
+/* --- одна роза (вид сверху) --- */
+function roseSVG() {
+  const layers = [[5,48,0],[5,38,36],[5,28,12],[4,19,50],[3,11,20]];
+  let p = "";
+  for (const [n, r, off] of layers)
+    for (let k = 0; k < n; k++)
+      p += `<path d="M0,0 C${-r*.95},${-r*.25} ${-r*.75},${-r} 0,${-r} C${r*.75},${-r} ${r*.95},${-r*.25} 0,0Z" transform="rotate(${off + k*360/n})"/>`;
+  return `<svg viewBox="-50 -50 100 100"><g fill="url(#pg)" stroke="#3d0410" stroke-width="1" stroke-opacity=".6">${p}</g><circle r="4" fill="#3d0410"/></svg>`;
+}
+
+/* --- раскладываем розы сердцем --- */
+const inHeart = (x, y) => Math.pow(x*x + y*y - 1, 3) - x*x*y*y*y;
+function points(s) {
+  const pts = []; let row = 0;
+  for (let y = -1.1; y <= 1.3; y += s * 0.866, row++)
+    for (let x = -1.2 + (row % 2) * s / 2; x <= 1.2; x += s) {
+      const f = inHeart(x, y);
+      if (f <= 0) pts.push({ x, y, f });
+    }
+  return pts;
+}
+let lo = 0.05, hi = 0.6;
+for (let k = 0; k < 40; k++) { const m = (lo + hi) / 2; points(m).length >= TOTAL ? lo = m : hi = m; }
+const spacing = lo;
+let pts = points(spacing).sort((a, b) => b.f - a.f).slice(points(spacing).length - TOTAL);
+pts.sort((a, b) => b.y - a.y || a.x - b.x);
+
+const svg = roseSVG();
+pts.forEach((p, k) => {
+  const d = document.createElement("div");
+  d.className = "rose" + (opened.has(k) ? " open" : "");
+  const sz = spacing * 1.3 / 2.4 * 100;
+  d.style.left = (p.x + 1.2) / 2.4 * 100 + "%";
+  d.style.top = (1.3 - p.y) / 2.4 * 100 + "%";
+  d.style.width = d.style.height = sz + "%";
+  d.style.setProperty("--r", Math.floor(Math.random() * 360) + "deg");
+  d.innerHTML = svg;
+  d.onclick = () => openRose(k);
+  $("bouquet").append(d);
+});
+
+function resize() {
+  const s = Math.min(innerWidth * 0.94, innerHeight - 170, 760);
+  $("bouquet").style.setProperty("--size", s + "px");
+}
+addEventListener("resize", resize); resize();
+
+function updateCounter() {
+  $("counter").innerHTML = `Распустилось <b>${opened.size}</b> из ${TOTAL}`;
+  $("letterBtn").classList.toggle("hidden", opened.size < TOTAL);
+}
+updateCounter();
+
+/* --- открыть розу --- */
+function openRose(k) {
+  const wasNew = !opened.has(k);
+  current = k;
+  opened.add(k); save(); updateCounter();
+  $("bouquet").children[k].classList.add("open");
+  const r = REASONS[k];
+  $("num").textContent = "РОЗА № " + (k + 1);
+  $("reason").textContent = r.text;
+  $("quote").textContent = r.quote ? "«" + r.quote + "»" : "";
+  $("quote").style.display = r.quote ? "block" : "none";
+  $("date").textContent = r.date || "";
+  $("nextBtn").textContent = opened.size < TOTAL ? "Следующая роза →" : "Все розы распустились ♥";
+  setTimeout(() => $("modal").classList.remove("hidden"), wasNew ? 1000 : 50);
+  if (wasNew) for (let i = 0; i < 6; i++) setTimeout(petal, i * 120);
+}
+function closeModal() {
+  $("modal").classList.add("hidden");
+}
+$("closeBtn").onclick = closeModal;
+$("modal").onclick = e => { if (e.target.id === "modal") closeModal(); };
+$("nextBtn").onclick = () => {
+  closeModal();
+  if (opened.size >= TOTAL) { setTimeout(showFinal, 500); return; }
+  let n = current;
+  do { n = (n + 1) % TOTAL; } while (opened.has(n));
+  setTimeout(() => openRose(n), 500);
+};
+
+function showFinal() {
+  $("garden").classList.add("hidden");
+  $("final").classList.remove("hidden");
+  for (let i = 0; i < 80; i++) setTimeout(petal, i * 50);
+}
+$("letterBtn").onclick = showFinal;
+$("backBtn").onclick = () => { $("final").classList.add("hidden"); $("garden").classList.remove("hidden"); };
+$("startBtn").onclick = () => { $("intro").classList.add("hidden"); $("garden").classList.remove("hidden"); };
+
+/* --- падающие лепестки --- */
+function petal() {
+  const p = document.createElement("span");
+  p.className = "petal";
+  p.style.left = Math.random() * 100 + "vw";
+  p.style.opacity = 0.35 + Math.random() * 0.45;
+  p.style.transform = `scale(${0.6 + Math.random()})`;
+  p.style.setProperty("--dx", (Math.random() * 200 - 100) + "px");
+  p.style.setProperty("--rot", (Math.random() * 720 - 360) + "deg");
+  p.style.animationDuration = 6 + Math.random() * 7 + "s";
+  $("petals").append(p);
+  setTimeout(() => p.remove(), 14000);
+}
+setInterval(petal, 800);
+</script>
+</body>
+</html>
