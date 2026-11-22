@@ -6,52 +6,94 @@
 <title>100 роз</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Manrope:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#14090d;--accent:#ff6b86;--text:#f8eaee;--muted:#b9959f}
+  :root{--bg:#0b0610;--accent:#ff6b86;--text:#f8eaee;--muted:#b9a0aa}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{background:radial-gradient(ellipse at 50% 40%,#3b1420 0%,var(--bg) 70%);color:var(--text);
-       font-family:'Manrope',sans-serif;overflow:hidden}
-  #petals{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+  body{background:radial-gradient(ellipse at 50% 35%,#2a1130 0%,#150a18 45%,var(--bg) 80%);
+       color:var(--text);font-family:'Manrope',sans-serif;overflow:hidden}
+
+  /* звёзды, лепестки, искры */
+  #sky,#petals{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+  #sky{z-index:0} #petals{z-index:5}
+  .star{position:absolute;border-radius:50%;background:#fff;animation:twinkle ease-in-out infinite}
+  @keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.95}}
+  .shoot{position:absolute;width:130px;height:2px;border-radius:2px;
+         background:linear-gradient(90deg,#fff,rgba(255,255,255,0));animation:shoot 1.3s ease-out forwards}
+  @keyframes shoot{from{opacity:1;transform:rotate(-25deg) translateX(0)}
+                   to{opacity:0;transform:rotate(-25deg) translateX(-320px)}}
   .petal{position:absolute;top:-30px;width:14px;height:10px;border-radius:80% 0 80% 0;
          background:linear-gradient(135deg,#ff7a93,#9c0f2b);animation:fall linear forwards}
   @keyframes fall{to{transform:translate(var(--dx),110vh) rotate(var(--rot))}}
+  .spark{position:fixed;width:7px;height:7px;border-radius:50%;pointer-events:none;z-index:6;
+         background:radial-gradient(#fff,#ffb3c2 55%,transparent 70%);animation:fly .9s ease-out forwards}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) scale(.2);opacity:0}}
+
+  /* экраны */
   .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
           justify-content:center;padding:20px;transition:opacity 1s;z-index:1}
   .hidden{opacity:0;pointer-events:none}
-  h1{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(2.2rem,6.5vw,4.2rem);
-     text-align:center;line-height:1.15}
+  @keyframes rise{from{opacity:0;transform:translateY(20px)}}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(1.9rem,5.5vw,3.4rem);
+     text-align:center;line-height:1.15;animation:rise 1.6s ease-out both}
   h1 em{color:var(--accent)}
-  .sub{color:var(--muted);margin:20px 0 36px;text-align:center;font-weight:300;line-height:1.8}
+  #globe{display:block;margin:18px auto 6px;animation:rise 1.8s .3s ease-out both}
+  .sub{color:var(--muted);margin:6px 0 24px;text-align:center;font-weight:300;line-height:1.8;
+       font-size:.95rem;animation:rise 1.6s .6s ease-out both}
   button{font-family:inherit;cursor:pointer;border:1px solid var(--accent);background:transparent;
          color:var(--text);padding:13px 30px;border-radius:999px;font-size:1rem;transition:.3s}
   button:hover{background:var(--accent);color:var(--bg)}
+  #startBtn{animation:rise 1.6s .9s ease-out both}
+
+  /* сад */
   .hint{color:var(--muted);font-size:.9rem;text-align:center;margin-bottom:10px;font-weight:300}
   #bouquet{position:relative;width:var(--size);height:var(--size)}
-  .rose{position:absolute;transform:translate(-50%,-50%);cursor:pointer}
+  .rose{position:absolute;transform:translate(-50%,-50%);cursor:pointer;opacity:0}
+  #bouquet.grow .rose{animation:appear .9s cubic-bezier(.2,.8,.3,1.3) var(--d) forwards}
+  @keyframes appear{from{opacity:0;scale:0}to{opacity:1;scale:1}}
+  .sway{width:100%;height:100%;animation:sway var(--sd) ease-in-out infinite}
+  .rose.open .sway{animation:none}
+  @keyframes sway{50%{transform:rotate(7deg) translateY(-2%)}}
   .rose svg{width:100%;height:100%;display:block;transform:rotate(var(--r)) scale(.5);
             filter:brightness(.45) saturate(.7);
             transition:transform 1.4s cubic-bezier(.2,.8,.25,1.15),filter 1.4s}
-  .rose:hover svg{transform:rotate(var(--r)) scale(.62);filter:brightness(.75)}
+  .rose:hover svg{transform:rotate(var(--r)) scale(.62);filter:brightness(.8)}
   .rose.open svg{transform:rotate(calc(var(--r) + 45deg)) scale(1);
-                 filter:drop-shadow(0 3px 5px rgba(0,0,0,.55))}
+                 filter:drop-shadow(0 3px 5px rgba(0,0,0,.55)) drop-shadow(0 0 6px rgba(255,90,120,.35))}
   .counter{font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-top:10px}
   .counter b{color:var(--accent);font-weight:600}
   #letterBtn{margin-top:12px}
-  .modal{position:fixed;inset:0;background:rgba(10,3,6,.7);backdrop-filter:blur(4px);z-index:4;
+
+  /* окно причины */
+  .modal{position:fixed;inset:0;background:rgba(8,3,10,.7);backdrop-filter:blur(4px);z-index:4;
          display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s}
-  .card{position:relative;width:min(540px,100%);background:linear-gradient(160deg,#3a1520,#1f0b11);
+  .card{position:relative;width:min(540px,100%);background:linear-gradient(160deg,#35152a,#1a0b16);
         border:1px solid rgba(255,107,134,.25);border-radius:24px;padding:44px 30px 32px;text-align:center;
-        transform:translateY(0);transition:transform .6s}
-  .modal.hidden .card{transform:translateY(20px)}
+        transition:transform .6s;box-shadow:0 0 60px rgba(255,80,120,.12)}
+  .modal.hidden .card{transform:translateY(24px) scale(.97)}
   .x{position:absolute;top:12px;right:14px;border:none;font-size:1.6rem;padding:4px 10px;color:var(--muted)}
   .x:hover{background:none;color:var(--text)}
   .num{font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:.3em;color:var(--accent)}
-  .reason{font-family:'Cormorant Garamond',serif;font-size:clamp(1.35rem,4vw,1.8rem);margin:20px 0;line-height:1.4}
+  .reason{font-family:'Cormorant Garamond',serif;font-size:clamp(1.35rem,4vw,1.8rem);margin:20px 0;
+          line-height:1.4;min-height:2.8em;cursor:pointer}
+  .fade{opacity:0;transform:translateY(8px);transition:.7s}
+  .fade.in{opacity:1;transform:none}
   .quote{font-style:italic;color:var(--muted);font-size:.95rem;border-left:2px solid var(--accent);
          padding-left:12px;text-align:left;margin:0 auto 6px;max-width:92%}
   .date{color:var(--muted);font-size:.8rem;margin:12px 0 24px;letter-spacing:.1em}
+
+  /* финал */
+  .bigheart{font-size:3.2rem;color:var(--accent);margin-bottom:18px;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{transform:scale(1)}15%{transform:scale(1.2)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
   .letter{max-width:620px;font-family:'Cormorant Garamond',serif;font-size:1.35rem;line-height:1.65;
-          text-align:center;white-space:pre-line;margin-bottom:32px}
+          text-align:center;white-space:pre-line;margin-bottom:32px;min-height:3em;cursor:pointer}
+
+  /* мелочи */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);opacity:0;z-index:7;
+         background:#35152a;border:1px solid rgba(255,107,134,.35);padding:12px 22px;border-radius:999px;
+         transition:.6s;font-size:.95rem;text-align:center;max-width:90vw;pointer-events:none}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .music{position:fixed;bottom:16px;left:16px;z-index:7;width:44px;height:44px;padding:0;font-size:1.1rem}
+  .music.off{opacity:.4}
 </style>
 </head>
 <body>
@@ -64,10 +106,14 @@
     </radialGradient>
   </defs>
 </svg>
+<div id="sky"></div>
 <div id="petals"></div>
+<div class="toast" id="toast"></div>
+<button class="music hidden" id="musicBtn">♪</button>
 
 <section class="screen" id="intro">
-  <h1><span id="cnt">100</span> роз —<br><em>100 причин</em>,<br>почему я тебя люблю</h1>
+  <h1>100 роз — 100 причин,<br>почему я <em>тебя люблю</em></h1>
+  <canvas id="globe"></canvas>
   <p class="sub" id="sub"></p>
   <button id="startBtn">Войти в сад 🌹</button>
 </section>
@@ -84,24 +130,38 @@
     <button class="x" id="closeBtn">×</button>
     <div class="num" id="num"></div>
     <p class="reason" id="reason"></p>
-    <p class="quote" id="quote"></p>
-    <p class="date" id="date"></p>
+    <p class="quote fade" id="quote"></p>
+    <p class="date fade" id="date"></p>
     <button id="nextBtn">Следующая роза →</button>
   </div>
 </div>
 
 <section class="screen hidden" id="final">
+  <div class="bigheart">♥</div>
   <p class="letter" id="letter"></p>
   <button id="backBtn">Вернуться к розам</button>
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script>
-/* ============ ЗАПОЛНИТЬ ============ */
-const HER_NAME    = "Имя";
-const MY_CITY     = "";          // например "Атырау"
-const HER_CITY    = "";          // например "Москва"
-const DISTANCE_KM = "";          // например "2 300"
-const START_DATE  = "";          // дата начала отношений, формат "2021-11-23"
+/* ================= ЗАПОЛНИТЬ ================= */
+const HER_NAME   = "Имя";
+const MY_CITY    = "Атырау";
+const HER_CITY   = "Калининград";
+const MY_COORDS  = [51.92, 47.10];   // [долгота, широта]
+const HER_COORDS = [20.51, 54.71];
+const MY_TZ      = "Asia/Atyrau";
+const HER_TZ     = "Europe/Kaliningrad";
+const START_DATE = "";               // дата начала отношений, например "2021-11-23"
+const MUSIC      = "";               // например "music.mp3" (загрузите файл в тот же репозиторий)
+
+const MILESTONES = {
+  25: "Четверть сада уже расцвела 🌸",
+  50: "Половина пути… как каждая наша встреча 🌹",
+  75: "Осталось совсем чуть-чуть ✨",
+};
+
 const LETTER = `Здесь будет твоё письмо ей.
 Напишем его вместе.`;
 
@@ -111,29 +171,161 @@ const REASONS = [
   { text: "Пример: потому что даже через тысячи километров я чувствую тебя рядом.",
     quote: "", date: "" },
 ];
-/* =================================== */
+/* ============================================= */
 
 const TOTAL = 100;
 while (REASONS.length < TOTAL)
   REASONS.push({ text: "Эта причина скоро появится 🌹", quote: "", date: "" });
 
 const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 let opened = new Set(), current = 0;
 try { opened = new Set(JSON.parse(localStorage.getItem("roses-opened") || "[]")); } catch(e) {}
 const save = () => { try { localStorage.setItem("roses-opened", JSON.stringify([...opened])); } catch(e) {} };
+$("letter").textContent = "";
 
-/* --- подпись на первом экране --- */
-const parts = ["для " + HER_NAME];
-if (MY_CITY && HER_CITY) parts.push(MY_CITY + " ♥ " + HER_CITY + (DISTANCE_KM ? " · " + DISTANCE_KM + " км" : ""));
-if (START_DATE) {
-  const days = Math.floor((Date.now() - new Date(START_DATE)) / 86400000);
-  if (days > 0) parts.push("вместе уже " + days.toLocaleString("ru-RU") + " дней");
+/* ---------- звёздное небо ---------- */
+for (let i = 0; i < 150; i++) {
+  const s = document.createElement("span");
+  const z = Math.random() * 2 + 0.5;
+  s.className = "star";
+  s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${z}px;height:${z}px;` +
+                    `animation-duration:${2 + Math.random()*4}s;animation-delay:${-Math.random()*5}s`;
+  $("sky").append(s);
 }
-$("sub").innerHTML = parts.map(p => p.replace(/</g, "&lt;")).join("<br>");
-$("cnt").textContent = TOTAL;
-$("letter").textContent = LETTER;
+function shootingStar() {
+  const s = document.createElement("span");
+  s.className = "shoot";
+  s.style.left = 30 + Math.random() * 70 + "%";
+  s.style.top = Math.random() * 40 + "%";
+  $("sky").append(s);
+  setTimeout(() => s.remove(), 1400);
+  setTimeout(shootingStar, 4000 + Math.random() * 7000);
+}
+setTimeout(shootingStar, 2500);
 
-/* --- одна роза (вид сверху) --- */
+/* ---------- расстояние, время, дни ---------- */
+function plural(n, [one, few, many]) {
+  n = Math.abs(n) % 100; const d = n % 10;
+  if (n > 10 && n < 20) return many;
+  if (d > 1 && d < 5) return few;
+  if (d === 1) return one;
+  return many;
+}
+function haversine([lo1, la1], [lo2, la2]) {
+  const r = Math.PI / 180;
+  const a = Math.sin((la2 - la1) * r / 2) ** 2 +
+            Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin((lo2 - lo1) * r / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(a));
+}
+const KM = Math.round(haversine(MY_COORDS, HER_COORDS));
+function tzOffset(tz) {
+  const d = new Date();
+  return (new Date(d.toLocaleString("en-US", { timeZone: tz })) -
+          new Date(d.toLocaleString("en-US", { timeZone: "UTC" }))) / 36e5;
+}
+const timeIn = tz => new Date().toLocaleTimeString("ru-RU", { timeZone: tz, hour: "2-digit", minute: "2-digit" });
+function updateInfo() {
+  const diff = Math.abs(tzOffset(MY_TZ) - tzOffset(HER_TZ));
+  const lines = [
+    "для " + HER_NAME,
+    `${MY_CITY} ♥ ${HER_CITY} · ${KM.toLocaleString("ru-RU")} км` +
+      (diff ? ` · ${diff} ${plural(diff, ["час", "часа", "часов"])} разницы` : ""),
+    `у меня ${timeIn(MY_TZ)} · у тебя ${timeIn(HER_TZ)}`,
+  ];
+  if (START_DATE) {
+    const days = Math.floor((Date.now() - new Date(START_DATE)) / 864e5);
+    if (days > 0) lines.push(`вместе уже ${days.toLocaleString("ru-RU")} ${plural(days, ["день", "дня", "дней"])}`);
+  }
+  $("sub").innerHTML = lines.map(esc).join("<br>");
+}
+updateInfo(); setInterval(updateInfo, 15000);
+
+/* ---------- планета ---------- */
+let globeOn = true, S = 0;
+const cv = $("globe"), ctx = cv.getContext("2d"), dpr = window.devicePixelRatio || 1;
+function sizeGlobe() {
+  S = Math.min(360, innerWidth * 0.8, innerHeight * 0.42);
+  cv.style.width = cv.style.height = S + "px";
+  cv.width = cv.height = Math.round(S * dpr);
+}
+sizeGlobe();
+
+(async function initGlobe() {
+  if (!window.d3) { cv.style.display = "none"; return; }
+  let land = null;
+  try {
+    const w = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json").then(r => r.json());
+    land = topojson.feature(w, w.objects.land);
+  } catch(e) {}
+  const proj = d3.geoOrthographic().clipAngle(90);
+  const path = d3.geoPath(proj, ctx);
+  const grat = d3.geoGraticule10();
+  const interp = d3.geoInterpolate(MY_COORDS, HER_COORDS);
+  const arc = { type: "LineString", coordinates: d3.range(0, 1.0001, 0.02).map(interp) };
+  const mid = interp(0.5);
+
+  function frame(t) {
+    if (!globeOn) return;
+    const s = cv.width, c = s / 2;
+    proj.scale(c * 0.86).translate([c, c]).rotate([-mid[0] + Math.sin(t / 6000) * 18, -mid[1] + 10, 0]);
+    ctx.clearRect(0, 0, s, s);
+
+    // свечение атмосферы
+    let g = ctx.createRadialGradient(c, c, c * 0.8, c, c, c);
+    g.addColorStop(0, "rgba(255,107,134,0.35)"); g.addColorStop(1, "rgba(255,107,134,0)");
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(c, c, c, 0, Math.PI * 2); ctx.fill();
+
+    // сфера
+    g = ctx.createRadialGradient(c * 0.75, c * 0.65, c * 0.1, c, c, c * 0.9);
+    g.addColorStop(0, "#3d1d42"); g.addColorStop(1, "#120814");
+    ctx.fillStyle = g; ctx.beginPath(); path({ type: "Sphere" }); ctx.fill();
+
+    // сетка
+    ctx.strokeStyle = "rgba(255,255,255,0.07)"; ctx.lineWidth = 0.6 * dpr;
+    ctx.beginPath(); path(grat); ctx.stroke();
+
+    // материки
+    if (land) {
+      ctx.fillStyle = "rgba(255,170,190,0.16)"; ctx.strokeStyle = "rgba(255,150,175,0.4)";
+      ctx.beginPath(); path(land); ctx.fill(); ctx.stroke();
+    }
+
+    // светящаяся дуга между нами
+    ctx.save();
+    ctx.strokeStyle = "#ff6b86"; ctx.lineWidth = 2 * dpr;
+    ctx.shadowColor = "#ff6b86"; ctx.shadowBlur = 10 * dpr;
+    ctx.setLineDash([6 * dpr, 6 * dpr]); ctx.lineDashOffset = -t / 40;
+    ctx.beginPath(); path(arc); ctx.stroke();
+    ctx.restore();
+
+    // города
+    const cities = [[MY_COORDS, MY_CITY, "left", 1], [HER_COORDS, HER_CITY, "right", -1]];
+    for (const [co, name, align, side] of cities) {
+      const [x, y] = proj(co);
+      const pr = (t / 1400) % 1;
+      ctx.strokeStyle = `rgba(255,107,134,${1 - pr})`; ctx.lineWidth = 1.5 * dpr;
+      ctx.beginPath(); ctx.arc(x, y, (4 + pr * 12) * dpr, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(x, y, 3.5 * dpr, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#f8eaee"; ctx.font = `${12 * dpr}px Manrope, sans-serif`;
+      ctx.textAlign = align; ctx.fillText(name, x + side * 10 * dpr, y + 16 * dpr);
+    }
+
+    // сердечко летит по дуге
+    const p = (Math.sin(t / 2200) + 1) / 2;
+    const [hx, hy] = proj(interp(p));
+    ctx.save();
+    ctx.fillStyle = "#ff6b86"; ctx.shadowColor = "#ff6b86"; ctx.shadowBlur = 12 * dpr;
+    ctx.font = `${16 * dpr}px serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("♥", hx, hy);
+    ctx.restore();
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- одна роза ---------- */
 function roseSVG() {
   const layers = [[5,48,0],[5,38,36],[5,28,12],[4,19,50],[3,11,20]];
   let p = "";
@@ -143,7 +335,7 @@ function roseSVG() {
   return `<svg viewBox="-50 -50 100 100"><g fill="url(#pg)" stroke="#3d0410" stroke-width="1" stroke-opacity=".6">${p}</g><circle r="4" fill="#3d0410"/></svg>`;
 }
 
-/* --- раскладываем розы сердцем --- */
+/* ---------- букет сердцем ---------- */
 const inHeart = (x, y) => Math.pow(x*x + y*y - 1, 3) - x*x*y*y*y;
 function points(s) {
   const pts = []; let row = 0;
@@ -157,8 +349,8 @@ function points(s) {
 let lo = 0.05, hi = 0.6;
 for (let k = 0; k < 40; k++) { const m = (lo + hi) / 2; points(m).length >= TOTAL ? lo = m : hi = m; }
 const spacing = lo;
-let pts = points(spacing).sort((a, b) => b.f - a.f).slice(points(spacing).length - TOTAL);
-pts.sort((a, b) => b.y - a.y || a.x - b.x);
+const all = points(spacing).sort((a, b) => b.f - a.f);
+const pts = all.slice(all.length - TOTAL).sort((a, b) => b.y - a.y || a.x - b.x);
 
 const svg = roseSVG();
 pts.forEach((p, k) => {
@@ -169,7 +361,13 @@ pts.forEach((p, k) => {
   d.style.top = (1.3 - p.y) / 2.4 * 100 + "%";
   d.style.width = d.style.height = sz + "%";
   d.style.setProperty("--r", Math.floor(Math.random() * 360) + "deg");
-  d.innerHTML = svg;
+  d.style.setProperty("--d", (Math.hypot(p.x, p.y - 0.1) * 0.9).toFixed(2) + "s");
+  const w = document.createElement("div");
+  w.className = "sway";
+  w.style.setProperty("--sd", (3 + Math.random() * 3).toFixed(1) + "s");
+  w.style.animationDelay = -(Math.random() * 5).toFixed(1) + "s";
+  w.innerHTML = svg;
+  d.append(w);
   d.onclick = () => openRose(k);
   $("bouquet").append(d);
 });
@@ -177,6 +375,7 @@ pts.forEach((p, k) => {
 function resize() {
   const s = Math.min(innerWidth * 0.94, innerHeight - 170, 760);
   $("bouquet").style.setProperty("--size", s + "px");
+  sizeGlobe();
 }
 addEventListener("resize", resize); resize();
 
@@ -186,58 +385,125 @@ function updateCounter() {
 }
 updateCounter();
 
-/* --- открыть розу --- */
-function openRose(k) {
-  const wasNew = !opened.has(k);
-  current = k;
-  opened.add(k); save(); updateCounter();
-  $("bouquet").children[k].classList.add("open");
-  const r = REASONS[k];
-  $("num").textContent = "РОЗА № " + (k + 1);
-  $("reason").textContent = r.text;
-  $("quote").textContent = r.quote ? "«" + r.quote + "»" : "";
-  $("quote").style.display = r.quote ? "block" : "none";
-  $("date").textContent = r.date || "";
-  $("nextBtn").textContent = opened.size < TOTAL ? "Следующая роза →" : "Все розы распустились ♥";
-  setTimeout(() => $("modal").classList.remove("hidden"), wasNew ? 1000 : 50);
-  if (wasNew) for (let i = 0; i < 6; i++) setTimeout(petal, i * 120);
+/* ---------- эффекты ---------- */
+let typer = null, finishTyping = null;
+function typeText(el, text, speed, done) {
+  clearInterval(typer);
+  const ch = [...text]; let i = 0;
+  el.textContent = "";
+  finishTyping = () => { clearInterval(typer); el.textContent = text; finishTyping = null; if (done) done(); };
+  typer = setInterval(() => {
+    el.textContent = ch.slice(0, ++i).join("");
+    if (i >= ch.length && finishTyping) finishTyping();
+  }, speed);
 }
-function closeModal() {
-  $("modal").classList.add("hidden");
-}
-$("closeBtn").onclick = closeModal;
-$("modal").onclick = e => { if (e.target.id === "modal") closeModal(); };
-$("nextBtn").onclick = () => {
-  closeModal();
-  if (opened.size >= TOTAL) { setTimeout(showFinal, 500); return; }
-  let n = current;
-  do { n = (n + 1) % TOTAL; } while (opened.has(n));
-  setTimeout(() => openRose(n), 500);
-};
+$("reason").onclick = () => finishTyping && finishTyping();
+$("letter").onclick = () => finishTyping && finishTyping();
 
-function showFinal() {
-  $("garden").classList.add("hidden");
-  $("final").classList.remove("hidden");
-  for (let i = 0; i < 80; i++) setTimeout(petal, i * 50);
+function sparkle(el) {
+  const r = el.getBoundingClientRect();
+  const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  for (let i = 0; i < 14; i++) {
+    const s = document.createElement("span");
+    const a = Math.random() * Math.PI * 2, dist = 30 + Math.random() * 50;
+    s.className = "spark";
+    s.style.left = cx + "px"; s.style.top = cy + "px";
+    s.style.setProperty("--tx", Math.cos(a) * dist + "px");
+    s.style.setProperty("--ty", Math.sin(a) * dist + "px");
+    document.body.append(s);
+    setTimeout(() => s.remove(), 1000);
+  }
 }
-$("letterBtn").onclick = showFinal;
-$("backBtn").onclick = () => { $("final").classList.add("hidden"); $("garden").classList.remove("hidden"); };
-$("startBtn").onclick = () => { $("intro").classList.add("hidden"); $("garden").classList.remove("hidden"); };
-
-/* --- падающие лепестки --- */
 function petal() {
   const p = document.createElement("span");
   p.className = "petal";
   p.style.left = Math.random() * 100 + "vw";
   p.style.opacity = 0.35 + Math.random() * 0.45;
-  p.style.transform = `scale(${0.6 + Math.random()})`;
   p.style.setProperty("--dx", (Math.random() * 200 - 100) + "px");
   p.style.setProperty("--rot", (Math.random() * 720 - 360) + "deg");
   p.style.animationDuration = 6 + Math.random() * 7 + "s";
   $("petals").append(p);
   setTimeout(() => p.remove(), 14000);
 }
-setInterval(petal, 800);
+setInterval(petal, 1400);
+
+let toastTimer;
+function toast(msg) {
+  $("toast").textContent = msg;
+  $("toast").classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $("toast").classList.remove("show"), 4000);
+}
+
+/* ---------- музыка ---------- */
+let audio = null;
+if (MUSIC) { audio = new Audio(MUSIC); audio.loop = true; }
+$("musicBtn").onclick = () => {
+  if (!audio) return;
+  if (audio.paused) { audio.play().catch(() => {}); $("musicBtn").classList.remove("off"); }
+  else { audio.pause(); $("musicBtn").classList.add("off"); }
+};
+
+/* ---------- открыть розу ---------- */
+function openRose(k) {
+  const el = $("bouquet").children[k];
+  const wasNew = !opened.has(k);
+  current = k;
+  opened.add(k); save(); updateCounter();
+  el.classList.add("open");
+  if (wasNew) {
+    sparkle(el);
+    if (navigator.vibrate) navigator.vibrate(25);
+    for (let i = 0; i < 6; i++) setTimeout(petal, i * 120);
+    if (MILESTONES[opened.size]) setTimeout(() => toast(MILESTONES[opened.size]), 2200);
+  }
+  const r = REASONS[k];
+  $("num").textContent = "РОЗА № " + (k + 1);
+  $("reason").textContent = "";
+  $("quote").textContent = r.quote ? "«" + r.quote + "»" : "";
+  $("quote").style.display = r.quote ? "block" : "none";
+  $("date").textContent = r.date || "";
+  $("quote").classList.remove("in"); $("date").classList.remove("in");
+  $("nextBtn").textContent = opened.size < TOTAL ? "Следующая роза →" : "Все розы распустились ♥";
+  setTimeout(() => {
+    $("modal").classList.remove("hidden");
+    typeText($("reason"), r.text, 28, () => { $("quote").classList.add("in"); $("date").classList.add("in"); });
+  }, wasNew ? 1000 : 50);
+}
+const modalOpen = () => !$("modal").classList.contains("hidden");
+function closeModal() { $("modal").classList.add("hidden"); }
+function nextRose() {
+  closeModal();
+  if (opened.size >= TOTAL) { setTimeout(showFinal, 500); return; }
+  let n = current;
+  do { n = (n + 1) % TOTAL; } while (opened.has(n));
+  setTimeout(() => openRose(n), 500);
+}
+$("closeBtn").onclick = closeModal;
+$("nextBtn").onclick = nextRose;
+$("modal").onclick = e => { if (e.target.id === "modal") closeModal(); };
+document.addEventListener("keydown", e => {
+  if (!modalOpen()) return;
+  if (e.key === "Escape") closeModal();
+  if (e.key === "Enter" || e.key === "ArrowRight") nextRose();
+});
+
+/* ---------- переходы ---------- */
+$("startBtn").onclick = () => {
+  globeOn = false;
+  $("intro").classList.add("hidden");
+  $("garden").classList.remove("hidden");
+  $("bouquet").classList.add("grow");
+  if (audio) { audio.play().catch(() => {}); $("musicBtn").classList.remove("hidden"); }
+};
+function showFinal() {
+  $("garden").classList.add("hidden");
+  $("final").classList.remove("hidden");
+  for (let i = 0; i < 80; i++) setTimeout(petal, i * 50);
+  setTimeout(() => typeText($("letter"), LETTER, 35), 800);
+}
+$("letterBtn").onclick = showFinal;
+$("backBtn").onclick = () => { $("final").classList.add("hidden"); $("garden").classList.remove("hidden"); };
 </script>
 </body>
 </html>
