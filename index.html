@@ -688,7 +688,7 @@ let globeOn = true, S = 0, startGlobe = () => {};
 const cv = $("globe"), ctx = cv.getContext("2d"), dpr = window.devicePixelRatio || 1;
 const flying = [], ripples = [];
 function sizeGlobe() {
-  S = Math.min(340, innerWidth * 0.8, innerHeight * 0.4);
+  S = Math.min(560, innerWidth * 0.96, innerHeight * 0.5);
   cv.style.width = cv.style.height = S + "px";
   cv.width = cv.height = Math.round(S * dpr);
 }
