@@ -13,11 +13,11 @@
        color:var(--text);font-family:'Manrope',sans-serif;overflow:hidden}
 
   #sky,#petals{position:fixed;inset:0;pointer-events:none;overflow:hidden}
-  #sky{z-index:0} #petals{z-index:5}
+  #sky{z-index:0} #petals{z-index:0}
   .star{position:absolute;border-radius:50%;background:#fff;animation:twinkle ease-in-out infinite}
   @keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.95}}
   .shoot{position:absolute;width:130px;height:2px;border-radius:2px;
-         background:linear-gradient(90deg,#fff,rgba(255,255,255,0));animation:shoot 1.3s ease-out forwards}
+         background:linear-gradient(90deg,#fff,rgba(255,255,255,0));animation:shoot 1.9s ease-out forwards}
   @keyframes shoot{from{opacity:1;transform:rotate(-25deg) translateX(0)}
                    to{opacity:0;transform:rotate(-25deg) translateX(-320px)}}
   .petal{position:absolute;top:-30px;width:14px;height:10px;border-radius:80% 0 80% 0;
@@ -43,8 +43,10 @@
          color:var(--text);padding:13px 26px;border-radius:999px;font-size:1rem;transition:.3s}
   button:hover{background:var(--accent);color:var(--bg)}
   .doors{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:rise 1.6s .9s ease-out both}
+  #garden{padding-top:64px}
 
-  .home{position:fixed;top:14px;left:14px;z-index:8;padding:8px 16px;font-size:.85rem;border-color:var(--line)}
+  .home{position:fixed;top:14px;left:14px;z-index:8;padding:8px 16px;font-size:.85rem;border-color:var(--line);
+         background:rgba(11,6,16,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 
   .hint{color:var(--muted);font-size:.9rem;text-align:center;margin-bottom:10px;font-weight:300}
   .rnote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:#d9c2ff;text-align:center;max-width:420px;margin-bottom:6px;line-height:1.35}
@@ -55,12 +57,20 @@
   .sway{width:100%;height:100%;animation:sway var(--sd) ease-in-out infinite}
   .rose.open .sway{animation:none}
   @keyframes sway{50%{transform:rotate(7deg) translateY(-2%)}}
-  .rose svg{width:100%;height:100%;display:block;transform:rotate(var(--r)) scale(.5);
-            filter:brightness(.45) saturate(.7);
+  .rose svg{width:100%;height:100%;display:block;overflow:visible;transform:rotate(var(--r)) scale(1.05);
+            filter:brightness(.78) saturate(.85) drop-shadow(0 2px 3px rgba(0,0,0,.45));
             transition:transform 1.4s cubic-bezier(.2,.8,.25,1.15),filter 1.4s}
-  .rose:hover svg{transform:rotate(var(--r)) scale(.62);filter:brightness(.8)}
+  .rose:hover svg{transform:rotate(var(--r)) scale(1.15);filter:brightness(.95) saturate(.95) drop-shadow(0 0 6px rgba(200,160,255,.45))}
   .rose.open svg{transform:rotate(calc(var(--r) + 45deg)) scale(1);
                  filter:drop-shadow(0 3px 5px rgba(0,0,0,.55)) drop-shadow(0 0 6px rgba(180,140,255,.4))}
+  /* бутон → цветок */
+  .pl{transform-box:view-box;transform-origin:0 0;
+      transition:transform 1.1s cubic-bezier(.2,.8,.25,1.2),opacity .9s}
+  .rose:not(.open) .pl0{transform:scale(.3) rotate(-40deg);opacity:0}
+  .rose:not(.open) .pl1{transform:scale(.45) rotate(-30deg);opacity:0}
+  .rose:not(.open) .pl2{transform:scale(.9) rotate(-15deg)}
+  .rose.open .pl1{transition-delay:.12s}
+  .rose.open .pl0{transition-delay:.25s}
   .counter{font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-top:10px}
   .counter b{color:var(--accent);font-weight:600}
   #letterBtn{margin-top:12px}
@@ -73,7 +83,8 @@
   .modal.hidden .card{transform:translateY(24px) scale(.97)}
   .x{position:absolute;top:10px;right:12px;border:none;font-size:1.6rem;padding:4px 10px;color:var(--muted)}
   .x:hover{background:none;color:var(--text)}
-  .num{font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:.3em;color:var(--accent)}
+  .num{font-family:'Cormorant Garamond',serif;font-size:1.25rem;letter-spacing:.3em;color:var(--accent)}
+  .num small{font-size:.75rem;letter-spacing:.2em;color:var(--muted)}
   .reason{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3.6vw,1.55rem);margin:20px 0;
           line-height:1.5;min-height:2.8em;cursor:pointer;white-space:pre-line;text-align:left}
   .fade{opacity:0;transform:translateY(8px);transition:.7s}
@@ -129,7 +140,14 @@
          background:#35152a;border:1px solid rgba(255,107,134,.35);padding:12px 22px;border-radius:999px;
          transition:.6s;font-size:.95rem;text-align:center;max-width:90vw;pointer-events:none}
   .toast.show{opacity:1;transform:translate(-50%,0)}
-  .music{position:fixed;bottom:16px;left:16px;z-index:7;width:44px;height:44px;padding:0;font-size:1.1rem}
+  .music{position:fixed;bottom:16px;left:16px;z-index:7;width:44px;height:44px;padding:0;font-size:1.1rem;
+         display:flex;align-items:flex-end;justify-content:center;gap:3px;padding-bottom:14px;
+         background:rgba(11,6,16,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .music i{width:3px;height:14px;border-radius:2px;background:currentColor;transform-origin:bottom;transform:scaleY(.3)}
+  .music.on i{animation:eq 1s ease-in-out infinite}
+  .music.on i:nth-child(2){animation-delay:-.4s;animation-duration:.8s}
+  .music.on i:nth-child(3){animation-delay:-.7s;animation-duration:1.2s}
+  @keyframes eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
   .music.off{opacity:.4}
   @media (max-width:420px){.lbl{font-size:1rem;bottom:8px}.seal{width:32px;height:32px}}
   .eggs{color:var(--muted);font-size:.78rem;margin-top:16px;text-align:center;letter-spacing:.05em;animation:rise 1.6s 1.1s ease-out both}
@@ -147,37 +165,13 @@
   :root.green{--accent:#4fd18b;--line:rgba(79,209,139,.3)}
   .choc{position:absolute;top:-30px;font-size:22px;animation:fall linear forwards}
 
-  /* досье */
-  #dos{display:block;overflow-y:auto;padding:64px 16px 56px}
-  .stamp{display:inline-block;border:2px solid var(--accent);color:var(--accent);padding:4px 12px;border-radius:6px;
-         font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;transform:rotate(-4deg);margin-bottom:14px}
   .ehead .rx{margin-top:16px}
-  .dgrid{display:block}
-  .dgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-  .fact{position:relative;text-align:left;border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;
-        background:linear-gradient(160deg,#2c1226,#1a0b16);cursor:pointer;min-height:96px;transition:transform .3s}
-  .fact:hover{transform:translateY(-2px)}
-  .fact .ft{font-family:'Cormorant Garamond',serif;font-size:1.25rem;margin-bottom:6px}
-  .fact .fx{color:var(--muted);font-size:.9rem;line-height:1.55;white-space:pre-line;transition:filter .5s,opacity .5s}
-  .fact .fn{position:absolute;top:12px;right:14px;font-size:.7rem;color:var(--muted);letter-spacing:.1em}
-  .fact:not(.open) .fx{filter:blur(6px);opacity:.6;user-select:none}
-  .fact:not(.open)::after{content:"рассекретить";position:absolute;left:16px;bottom:12px;font-size:.68rem;letter-spacing:.2em;
-        color:var(--accent);text-transform:uppercase}
-  .dfoot{text-align:center;color:var(--muted);font-size:.9rem;margin-top:30px;line-height:1.7}
-  .file{max-width:560px;margin:18px auto 0;border:1px solid var(--line);border-radius:14px;padding:6px 16px;
-        background:rgba(255,255,255,.02);text-align:left}
-  .frow{display:flex;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:.9rem}
-  .frow:last-child{border-bottom:none}
-  .frow span{flex:0 0 92px;color:var(--muted);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;padding-top:2px}
-  .frow b{font-weight:400}
-  .dhint{color:var(--muted);font-size:.8rem;margin-top:14px;letter-spacing:.05em}
-  .dsec{font-family:'Cormorant Garamond',serif;font-size:1.6rem;margin:30px 0 12px;display:flex;align-items:center;gap:12px}
-  .dsec::after{content:"";flex:1;height:1px;background:var(--line)}
-  .dsec small{font-family:'Manrope',sans-serif;font-size:.72rem;color:var(--muted);letter-spacing:.1em}
+
+  @media (prefers-reduced-motion:reduce){.petal,.shoot{display:none}.sway{animation:none}}
 
   /* мини-игра */
-  #game{position:fixed;inset:0;z-index:20;background:#0b0610;transition:opacity .5s}
-  #gc{width:100%;height:100%;display:block;touch-action:none}
+  #game,#fly,#cons{position:fixed;inset:0;z-index:20;background:#0b0610;transition:opacity .5s}
+  #gc,#flyc,#consc{width:100%;height:100%;display:block;touch-action:none;-webkit-user-select:none;user-select:none}
   .gpanel{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
           text-align:center;padding:24px 16px;background:rgba(11,6,16,.86);transition:opacity .4s}
   .gpanel h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(2rem,7vw,3rem);line-height:1.1}
@@ -185,6 +179,10 @@
   .gpanel p{color:var(--muted);line-height:1.7;margin:12px 0;max-width:420px;font-size:.92rem}
   .gpanel .big{font-family:'Cormorant Garamond',serif;font-size:4rem;color:var(--accent);line-height:1}
   .gpanel .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+  .gpanel .note{font-family:'Cormorant Garamond',serif;font-size:clamp(1.15rem,4vw,1.4rem);color:var(--text);line-height:1.5}
+  .gpanel.cons-end{justify-content:flex-end;padding-bottom:48px;background:linear-gradient(to bottom,transparent 64%,rgba(11,6,16,.9) 84%)}
+  #globe{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;transition:scale 2s ease-in,filter 2s ease-in}
+  #globe.holding{scale:1.07;filter:drop-shadow(0 0 28px var(--accent))}
   .gx{position:absolute;top:12px;right:12px;z-index:2;width:40px;height:40px;padding:0;font-size:1.3rem;border-color:var(--line)}
 </style>
 </head>
@@ -201,7 +199,7 @@
 <div id="sky"></div>
 <div id="petals"></div>
 <div class="toast" id="toast"></div>
-<button class="music" id="musicBtn" title="музыка">♪</button>
+<button class="music" id="musicBtn" title="музыка" aria-label="музыка"><i></i><i></i><i></i></button>
 <button class="home hidden" id="homeBtn">← на главную</button>
 
 <!-- главная -->
@@ -256,27 +254,6 @@
   </div>
 </section>
 
-<!-- досье -->
-<section class="screen hidden" id="dos">
-  <div class="wrap">
-    <div class="ehead">
-      <div class="stamp">совершенно секретно</div>
-      <h1>Досье на <em>Зеленоглазку</em></h1>
-      <div class="file">
-        <div class="frow"><span>Объект</span><b>Зеленоглазка, она же Великая</b></div>
-        <div class="frow"><span>Ареал</span><b>Калининград, тёмные маленькие места, под пледиком</b></div>
-        <div class="frow"><span>Активна</span><b>ночью, «энергия только перед сном»</b></div>
-        <div class="frow"><span>Опасность</span><b>милая, но кусается</b></div>
-        <div class="frow"><span>Статус</span><b>занята, мной</b></div>
-        <div class="frow"><span>Составил</span><b>твой рабик, путём долгого и очень внимательного наблюдения</b></div>
-      </div>
-      <p class="dhint">нажимай на карточки, чтобы рассекретить</p>
-    </div>
-    <div class="dgrid" id="dgrid"></div>
-    <p class="dfoot" id="dfoot"></p>
-  </div>
-</section>
-
 <!-- открой, когда -->
 <section class="screen hidden" id="env">
   <div class="wrap">
@@ -314,6 +291,20 @@
 </div>
 
 <!-- мини-игра -->
+<!-- долететь до тебя -->
+<div id="fly" class="hidden">
+  <canvas id="flyc"></canvas>
+  <div class="gpanel" id="flyPanel"></div>
+  <button class="gx" id="flyExit">×</button>
+</div>
+
+<!-- созвездие -->
+<div id="cons" class="hidden">
+  <canvas id="consc"></canvas>
+  <div class="gpanel" id="consPanel"></div>
+  <button class="gx" id="consExit">×</button>
+</div>
+
 <div id="game" class="hidden">
   <canvas id="gc"></canvas>
   <div class="gpanel" id="gPanel"></div>
@@ -331,6 +322,27 @@ const MY_COORDS  = [51.92, 47.10];   // [долгота, широта]
 const HER_COORDS = [20.51, 54.71];
 const MY_TZ      = "Asia/Atyrau";
 const HER_TZ     = "Europe/Kaliningrad";
+
+// записка в конце игры «Долететь до тебя»
+const FLIGHT_NOTE = `Вот так и я: сколько бы ни было туч и километров, всё равно долечу
+Жди меня, Зеленоглазка <3`;
+
+// созвездия: координаты от -1 до 1, каждая линия рисуется по порядку точек
+const CONSTELLATIONS = [
+  { name: "Сердце", shape: "heart", caption: "Мое сердечко\nОно давно принадлежит тебе, хихихи" },
+  { name: "Лаванда", caption: "Эта лаванда для тебя\nВедь ты у меня символизируешь нежность, спокойствие, гармонию и искреннюю привязанность C:", strokes: [
+    [[0, -1], [0, -.45], [0, .05]],                                                        // стебель
+    [[0, .05], [-.2, .2], [.2, .34], [-.2, .48], [.2, .62], [-.15, .76], [.11, .88], [0, 1]], // колосок
+    [[-.4, -.15], [0, -.45], [.4, -.15]],                                                  // листики
+  ] },
+  { name: "К", caption: "Первая буква в твоей имени, как и твое имя, Кристин останется для меня памятью о тебе на всю жизнь <3", strokes: [
+    [[-.45, .85], [-.45, 0], [-.45, -.85]],
+    [[.5, .85], [-.45, 0], [.5, -.85]],
+  ] },
+];
+// текст после всех созвездий
+const CONS_FINAL = `Даже если между нами 2 335 км, небо у нас одно
+Посмотри наверх, я тоже смотрю <3`;
 
 // письмо после 101 розы
 const LETTER = `Ну всё, ты открыла все сто
@@ -462,8 +474,7 @@ const LETTERS = [
 Неприятная, но цифра
 И я каждый день думаю, как её уменьшить
 
-Напиши мне одно слово «скучаю»
-Больше ничего не надо, я пойму <3` },
+И стать еще ближе к тебе, хоть если не на 2 335 км, так на 1-2 км с каждым часом <3` },
 
   { when: "не спится",
     art: `   ⋆ ˚｡⋆       ☾       ⋆ ˚｡⋆
@@ -473,18 +484,15 @@ const LETTERS = [
 Попробуй вместо овец считать, сколько раз я сегодня о тебе подумал
 Собьёшься раньше, чем уснёшь, но это и есть план
 
-Приятненьких и самых комфортненьких снов, мам
-Я рядом, просто далеко~~~` },
+Приятненьких и самых комфортненьких снов, моя любовь~~~
+Я всегда рядом~~~` },
 
   { when: "грустно",
     art: `(っ˘ω˘ς )  ⊂(´･ω･｀⊂)`,
     text: `Иди сюда
 
 Не обязательно рассказывать, что случилось
-Можно просто написать «мне плохо», и я буду рядом столько, сколько надо
-
-Если совсем никак, разрешаю принять одну шутку из твоего же сборника
-Но не больше трёх в день, ты сама так прописала` },
+Можно просто написать мне, и я буду рядом столько, сколько надо, чтобы поддержать тебя и крепко крепко обнимать <3` },
 
   { when: "злишься на меня",
     art: `‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎boop
@@ -495,12 +503,11 @@ const LETTERS = [
     text: `Ладно
 Скорее всего, я заслужил
 
-Но прежде чем меня казнить, Великая, вспомни, что я твой самый преданный рабик и без меня некому будет носить тебе шоколадки
+Но прежде чем меня казнить, Госпожа, вспомни, что я твой самый преданный раб и без меня некому будет носить тебе шоколадки
 
 boop
 
-Всё, мир? Если нет, напиши, в чём я неправ
-Я правда послушаю, окак?`, boop: true },
+Всё, мир? >:)`, boop: true },
 
   { when: "устала",
     art: `   /\\_/\\      (\\  /)       A   A
@@ -509,18 +516,18 @@ boop
     text: `Сначала поешь
 Нормально поешь, а не чай с печенькой
 
-Потом под одеяло
-Всё остальное подождёт, а я подожду тем более
+Потом под тепленькое одеяло ко мне (я знаю ты будешь кусаться и сопротивляться)
+Всё остальное подождёт
 
 Ты не обязана всё успевать
 Ты обязана отдыхать
-Это приказ рабика, такое бывает раз в жизни` },
+Это приказ, такое бывает раз в жизни,` },
 
   { when: "хочется сладкого",
     art: `/)/)  (\\(\\
 (. .) (. .)
 ( づ🍫 ⊂ )`,
-    text: `Это я протягиваю тебе шоколадку
+    text: `Это я протягиваю тебе шоколадку Казахстан
 Пока только так
 
 Запиши: за мной долг
@@ -547,13 +554,13 @@ boop
 
   { when: "сомневаешься в себе",
     art: `ʕ •ᴥ•ʔノ  ♡  ヽ(•‿• ｡)`,
-    text: `Ты умнее, смешнее и красивее, чем сама о себе думаешь
+    text: `Ты умнее, смешнее и красивее, прекрасней всех на свете, чем сама о себе думаешь
 
 Это не комплимент
 Это факт, проверенный мной лично и многократно
 
-И вообще, Великие не сомневаются
-Они просто иногда устают` },
+И вообще, звезда на небе не сомневаются
+Они просто иногда устают от того как они ярко светятся в небесах ради нас <3` },
 
   { when: "считаешь дни до встречи",
     art: `( ˘ ³˘)♡ · · · · · · · ♡(˘ε˘ )
@@ -564,19 +571,19 @@ boop
 Это минус один до того, как я просто приеду и всё это станет не нужно
 
 Держись, бейба
-Я уже ближе, чем вчера` },
+Я уже ближе, с каждым днем~~~` },
 
   { when: "просто так",
     art: `(〃´∀\`)人(´∀\`〃)`,
     text: `Просто так тоже можно
 
-Люблю тебя мам, очень очень сина
-Без повода, без инструкции и без побочных эффектов
-Ну, почти <333` },
+Люблю тебя моя прекрасная зеленоглазка, очень очень сина
+Даже без повода, ведь думать о тебе и рассказывать о своей любви к тебе я могу хоть всю жизнь, настолько ты мне дорога` },
 
   { when: "хочется, чтобы я прочитал тебе стих",
     art: `(っ˘ω˘ς ) ♡ ( ˘ ³˘)`,
-    text: `Это я написал для тебя сам
+    text: `Повторяюсь, да, извинити.
+Но пусть останется здесь
 
 Два случайных человека
 Повстречались на пути,
@@ -610,16 +617,14 @@ boop
 
   { when: "открыла все 101 розу", lock: true,
     art: `(づ ◕‿◕ )づ ♡ ⊂(◕‿◕ ⊂)`,
-    text: `Ты правда открыла все сто
-Я знал, что дойдёшь, ты же у меня упрямая
+    text: `Ты правда открыла все сто (+1)
+Я знал, что ты дойдёшь, ты же у меня упрямая укоротительница сердец, и погонишься за каждой розочкой (подмиг)
 
 Причин на самом деле больше
 Просто в сад они уже не влезли
 
-Остальные расскажу лично` },
+Остальные расскажу лично, когда встречу тебя с глазу на глаз, в твои зеленые, яркие и прекрасные глаза <3` },
 ];
-// досье: факты о ней
-const FACTS = [{"s": "Рацион", "i": [{"t": "Якисоба", "x": "Твоё самое любимое японское блюдо\nТы готовишь её сама, а мама потом всё утаскивает"}, {"t": "Онигири", "x": "Ты обещала сделать мне онигири с мордашкой мишки\nЯ запомнил, долг записан"}, {"t": "Чизкейк", "x": "Твой любимый десерт, «очень очень вкусна», цитирую дословно"}, {"t": "Клубника", "x": "Всё, что с клубникой, для тебя вкусно\nА если я буду пахнуть клубникой, ты будешь любить меня ещё больше, сама сказала"}, {"t": "Виноградное", "x": "Если будет твоё любимое виноградное, тебя можно уговорить почти на что угодно"}, {"t": "Красная рыба", "x": "Ты её обожаешь, и мама делает тебе с ней бутерброды на завтрак, потому что знает"}, {"t": "Чаёк и какао", "x": "Ты любишь попить чаёк, а из всего остального всегда выбираешь какао, лучше с зефирками"}, {"t": "Всё и сразу", "x": "«Я люблю есть всё сразу»\nНикакой очерёдности, только хаос"}]}, {"s": "Повадки", "i": [{"t": "«Хмпх,,,,,,»", "x": "Значит, ты дуешься, но не всерьёз\nЧем больше запятых, тем сильнее надо тебя потискать"}, {"t": "«Хехе»", "x": "Значит, ты что-то задумала\nИ мне уже страшно и интересно одновременно"}, {"t": "Последнее слово", "x": "«Я люблю, когда последнее слово именно за мной»\nПоэтому в этом досье последнее слово тоже оставлю тебе, внизу"}, {"t": "Скандалы", "x": "Ты сама призналась, что любишь поскандалить\nНо скандалишь ты так мило, что я иногда специально подставляюсь"}, {"t": "Кусь", "x": "Ты кусаешься\nПредупреждаешь честно: «я тебя укушу», и правда кусаешь"}, {"t": "Ревность", "x": "Ревнуешь открыто и громко, капсом: «Я РЕВНУЮ АЛЕ»\nИ сразу готова идти с кем-то драться"}, {"t": "«Ты мой»", "x": "Ты говоришь это так часто и так уверенно, что спорить бессмысленно\nДа и не хочется"}, {"t": "Видосы про нас", "x": "Каждый день ты находишь в интернете видео и пишешь «это мы»\nУ тебя уже целая коллекция нас из других людей"}, {"t": "Наш лор", "x": "Ты придумываешь нам истории: то мы друзья детства, то уже где-то вместе живём\nИ всё это звучит так, будто уже было"}, {"t": "Пледики", "x": "Ты всех укутываешь: пледик, пушистое одеяло, тёплые шарфики\nИ обещала обмотать моё сердечко шарфиками и поставить рядом какао"}, {"t": "Сова", "x": "Ты сова-интроверт, у тебя «энергия только перед сном появляется»\nПоэтому самое интересное у нас всегда ночью"}, {"t": "Коллекции", "x": "Ты собираешь кроликов и показываешь их мне первому, «а то некому показывать»"}]}, {"s": "Особые приметы", "i": [{"t": "Глаза", "x": "Зелёные, самые красивые\nОтсюда и кличка в этом деле"}, {"t": "Смех", "x": "Капсом, на полэкрана: «ААХАХАХАХАХАХ»\nУзнаю из тысячи"}, {"t": "«Умничка»", "x": "Твоё любимое слово для меня\nИ «хороший мальчик~», когда ты в настроении командовать"}, {"t": "«~~~» и «<3333»", "x": "Когда видишь это, значит, ты сейчас нежная\nЛови момент"}]}, {"s": "Слабые места", "i": [{"t": "Красные розы", "x": "Ненавидишь\nПоэтому в моём саду ни одной красной розы нет, я проверил"}, {"t": "Шум", "x": "Не выносишь, тебе нужна тишина и тёмное маленькое уютное место"}, {"t": "Обман", "x": "Ты слишком честная и слишком любишь правду\nПоэтому врать тебе нельзя никогда, и я не буду"}, {"t": "Тюфяки", "x": "Терпеть не можешь, когда я веду себя как тюфяк\nПринято, работаю над собой"}, {"t": "Чужой дом", "x": "Не любишь есть в гостях\nЗначит, будешь есть у меня, это почти твой дом"}, {"t": "Обнимашки", "x": "«Просто хочу обнимашки,,,,,,,»\nТвоё самое слабое место, и я этим нагло пользуюсь"}, {"t": "Когда о тебе волнуются", "x": "Ты это любишь\nОтлично, потому что я волнуюсь о тебе всегда"}]}, {"s": "Тайные желания", "i": [{"t": "Аэропорт", "x": "Ты хочешь запрыгнуть на меня прямо в аэропорту\nЯ поймаю, обещаю, тренирую руки"}, {"t": "Пигирайд", "x": "«ПИГИРАЙД ТОЛЬКО МОЙ»\nА ещё донести тебя на руках, желательно до другой страны"}, {"t": "Пикник", "x": "Постелить пледик и устроить пикник"}, {"t": "Цветочки и чай", "x": "Ты хочешь цветочки и пить чаёк под цветущим деревом"}, {"t": "Ночной Калининград", "x": "Чтобы нас катали по ночному городу\nТы на каблучках и в чёрном платье, а я твой дворецкий"}, {"t": "Похвастаться", "x": "Ты хочешь всем хвастаться своим песиком\nПесик это я, и я не против"}, {"t": "В обнимку", "x": "Укутать меня в пледик и ходить со мной в обнимку\nДа, пожалуйста"}]}, {"s": "Таланты", "i": [{"t": "Танцы", "x": "Ты любишь танцевать, а когда-то даже была хореографом"}, {"t": "Песни", "x": "Ты поёшь\nИ однажды сказала, что спела бы мне одну песню, я всё ещё жду"}, {"t": "Рисование", "x": "Ты рисуешь со школы, ещё тогда тебе написали, что ты должна продолжать\nТы продолжила, и теперь твоё творчество видят люди"}, {"t": "Большие мечты", "x": "У тебя их много\nИ почти в каждой ты уже придумала место для меня"}]}, {"s": "Как приручить (инструкция для себя)", "i": [{"t": "Пункт первый", "x": "Никогда не врать"}, {"t": "Пункт второй", "x": "Не быть тюфяком"}, {"t": "Пункт третий", "x": "На «хмпх» отвечать вниманием, а не оправданиями\nТы сама сказала: «если обижаюсь, то просто потому что хочу с тобой поиграть»"}, {"t": "Пункт четвёртый", "x": "Чаёк или какао, что-нибудь с клубникой и обнимашки\nРаботает всегда"}, {"t": "Пункт пятый", "x": "Волноваться о ней\nОна это любит, а мне и стараться не надо"}, {"t": "Пункт шестой", "x": "Оставлять за ней последнее слово\nНу, почти всегда"}]}];
 // =====================
 
 const TOTAL = 101;
@@ -636,7 +641,7 @@ let sent = load("hearts-sent", 0);
 let current = 0;
 
 // пасхалки
-const EGGS_TOTAL = 7;
+const EGGS_TOTAL = 9;
 let eggs = new Set(load("eggs-found", []));
 function updateEggs() {
   $("eggs").innerHTML = eggs.size
@@ -671,7 +676,7 @@ for (let i = 0; i < 150; i++) {
   s.style.left = 30 + Math.random() * 70 + "%";
   s.style.top = Math.random() * 40 + "%";
   $("sky").append(s);
-  setTimeout(() => s.remove(), 1400);
+  setTimeout(() => s.remove(), 2000);
   setTimeout(shootingStar, 4000 + Math.random() * 7000);
 })();
 
@@ -722,7 +727,7 @@ let globeOn = true, S = 0, startGlobe = () => {};
 const cv = $("globe"), ctx = cv.getContext("2d"), dpr = window.devicePixelRatio || 1;
 const flying = [], ripples = [];
 function sizeGlobe() {
-  S = Math.min(340, innerWidth * 0.8, innerHeight * 0.4);
+  S = Math.min(560, innerWidth * 0.96, innerHeight * 0.5);
   cv.style.width = cv.style.height = S + "px";
   cv.width = cv.height = Math.round(S * dpr);
 }
@@ -844,12 +849,17 @@ cv.addEventListener("click", () => sendHearts(3));
 
 // роза
 function roseSVG() {
+  // слои лепестков: снаружи внутрь; закрытая роза показывает только сердцевину (бутон),
+  // при открытии внешние слои раскрываются по очереди
   const layers = [[5,48,0],[5,38,36],[5,28,12],[4,19,50],[3,11,20]];
-  let p = "";
-  for (const [n, r, off] of layers)
+  let g = "";
+  layers.forEach(([n, r, off], li) => {
+    let p = "";
     for (let k = 0; k < n; k++)
       p += `<path d="M0,0 C${-r*.95},${-r*.25} ${-r*.75},${-r} 0,${-r} C${r*.75},${-r} ${r*.95},${-r*.25} 0,0Z" transform="rotate(${off + k*360/n})"/>`;
-  return `<svg viewBox="-50 -50 100 100"><g fill="url(#pg)" stroke="#24103d" stroke-width="1" stroke-opacity=".6">${p}</g><circle r="4" fill="#24103d"/></svg>`;
+    g += `<g class="pl pl${li}">${p}</g>`;
+  });
+  return `<svg viewBox="-50 -50 100 100"><g fill="url(#pg)" stroke="#24103d" stroke-width="1" stroke-opacity=".6">${g}</g><circle r="4" fill="#24103d"/></svg>`;
 }
 
 // букет сердцем
@@ -890,7 +900,7 @@ pts.forEach((p, k) => {
 });
 
 function resize() {
-  const s = Math.min(innerWidth * 0.94, innerHeight - 190, 760);
+  const s = Math.min(innerWidth * 0.94, innerHeight - 250, 760);
   $("bouquet").style.setProperty("--size", s + "px");
   sizeGlobe();
 }
@@ -958,7 +968,8 @@ const MUSIC_SRC = "music.mp3";
 const audio = new Audio(MUSIC_SRC);
 audio.loop = true; audio.volume = 0.45; audio.preload = "auto";
 let wantMusic = true, started = false;
-audio.addEventListener("playing", () => { started = true; });
+audio.addEventListener("playing", () => { started = true; $("musicBtn").classList.add("on"); });
+audio.addEventListener("pause", () => $("musicBtn").classList.remove("on"));
 const musicOn = () => { wantMusic = true; $("musicBtn").classList.remove("off"); audio.play().catch(() => {}); };
 const musicOff = () => { wantMusic = false; $("musicBtn").classList.add("off"); audio.pause(); };
 audio.play().catch(() => {});
@@ -982,7 +993,7 @@ function openRose(k) {
     if (opened.size === TOTAL) setTimeout(() => toast("В «Открой, когда…» открылся новый конверт"), 2200);
   }
   const r = REASONS[k];
-  $("num").textContent = "№ " + (k + 1);
+  $("num").innerHTML = `№ ${k + 1} <small>из ${TOTAL}</small>`;
   $("reason").textContent = "";
   $("quote").textContent = r.quote ? "«" + r.quote + "»" : "";
   $("quote").style.display = r.quote ? "block" : "none";
@@ -1044,37 +1055,7 @@ document.addEventListener("keydown", e => {
 });
 
 // экраны
-const SCREENS = ["intro", "garden", "final", "env", "dos"];
-let dosOpen = new Set(load("dos2-open", []));
-const DOS_TOTAL = FACTS.reduce((n, s) => n + s.i.length, 0);
-function renderDos() {
-  const root = $("dgrid"); root.innerHTML = "";
-  let k = 0;
-  FACTS.forEach(sec => {
-    const h = document.createElement("div");
-    h.className = "dsec"; h.innerHTML = `${esc(sec.s)} <small>${sec.i.length}</small>`;
-    root.append(h);
-    const g = document.createElement("div"); g.className = "dgrid2"; root.append(g);
-    sec.i.forEach(f => {
-      const id = k++;
-      const d = document.createElement("div");
-      d.className = "fact" + (dosOpen.has(id) ? " open" : "");
-      d.innerHTML = `<span class="fn">№ ${String(id + 1).padStart(2, "0")}</span><div class="ft">${esc(f.t)}</div><div class="fx">${esc(f.x)}</div>`;
-      d.onclick = () => {
-        if (dosOpen.has(id)) return;
-        dosOpen.add(id); store("dos2-open", [...dosOpen]); d.classList.add("open"); updDos();
-        if (dosOpen.size === DOS_TOTAL) toast("Досье рассекречено полностью");
-      };
-      g.append(d);
-    });
-  });
-  updDos();
-}
-function updDos() {
-  $("dfoot").innerHTML = dosOpen.size === DOS_TOTAL
-    ? "Заключение следствия: объект опасен, обаятелен и очень любим<br>Дело не закрывается никогда<br><br>Последнее слово, как ты любишь, за тобой"
-    : `рассекречено ${dosOpen.size} из ${DOS_TOTAL}`;
-}
+const SCREENS = ["intro", "garden", "final", "env"];
 let grown = false;
 function show(id) {
   closeModal(); closeEnv();
@@ -1086,7 +1067,6 @@ function show(id) {
     grown = true; $("bouquet").classList.add("grow");
   }
   if (id === "env") { renderEnv(); $("env").scrollTop = 0; }
-  if (id === "dos") { renderDos(); $("dos").scrollTop = 0; }
   if (id === "final") {
     $("letter").textContent = "";
     for (let i = 0; i < 80; i++) setTimeout(petal, i * 50);
@@ -1408,6 +1388,459 @@ const Game = (() => {
 })();
 tapCounter($("sub"), 3, () => { Game.open(); egg("game", "Нашла нашу игру"); });
 
+
+// ===== общий звук для новых игр =====
+let sfxCtx = null;
+function chime(freq, vol = .08, dur = 1.2, type = "sine") {
+  try {
+    sfxCtx = sfxCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (sfxCtx.state === "suspended") sfxCtx.resume();
+    const t = sfxCtx.currentTime, o = sfxCtx.createOscillator(), g = sfxCtx.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .02);
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g).connect(sfxCtx.destination); o.start(t); o.stop(t + dur + .05);
+  } catch (e) {}
+}
+function fitCanvas(cv) {
+  const d = window.devicePixelRatio || 1;
+  cv.width = innerWidth * d; cv.height = innerHeight * d;
+  const c = cv.getContext("2d"); c.setTransform(d, 0, 0, d, 0, 0);
+  return [innerWidth, innerHeight];
+}
+function heartPath(c, x, y, s) {
+  c.beginPath();
+  c.moveTo(x, y + s * .35);
+  c.bezierCurveTo(x - s * 1.1, y - s * .35, x - s * .45, y - s * 1.05, x, y - s * .45);
+  c.bezierCurveTo(x + s * .45, y - s * 1.05, x + s * 1.1, y - s * .35, x, y + s * .35);
+  c.closePath();
+}
+
+// ===== пасхалка 8: «Долететь до тебя» (зажать планету) =====
+const Flight = (() => {
+  const box = $("fly"), cv = $("flyc"), c = cv.getContext("2d"), panel = $("flyPanel");
+  const DUR = 60;                      // секунд полёта
+  let W = 0, H = 0, raf = 0, running = false, assist = false, last = 0;
+  let t = 0, y = 0, vy = 0, lives = 3, hurtUntil = 0, obs = [], gems = [], spawnAt = 0, caught = 0, bumps = 0, fx = [];
+  const sky = Array.from({ length: 90 }, () => [Math.random(), Math.random(), Math.random() * 1.5 + .3]);
+  const hx = () => Math.max(70, W * .26);
+  const ground = () => H - 46;
+  const kmLeft = () => Math.max(0, Math.round(KM * (1 - t / DUR)));
+
+  function flap() {
+    if (!running) return;
+    vy = -Math.min(460, H * .62);
+    chime(660 + Math.random() * 120, .025, .18, "triangle");
+  }
+  function spawn() {
+    const p = t / DUR;
+    const gap = Math.max(H * .2, 210 - p * 60), top = 90, bottom = ground() - 20;
+    const cy = top + gap / 2 + Math.random() * (bottom - top - gap);
+    const x = W + 60, puffs = [];
+    for (let yy = top - 40; yy < bottom + 30; yy += 34) {
+      if (Math.abs(yy - cy) < gap / 2 + 18) continue;
+      puffs.push({ dx: (Math.random() - .5) * 18, y: yy, r: 22 + Math.random() * 12 });
+    }
+    obs.push({ x, puffs, zap: Math.random() < .35 });
+    if (Math.random() < .7) gems.push({ x: x + (Math.random() - .5) * 20, y: cy, got: false });
+  }
+  function hit() {
+    if (performance.now() < hurtUntil) return;
+    hurtUntil = performance.now() + 1300; bumps++;
+    fx.push({ txt: assist ? "держу" : "ой", x: hx(), y, t: performance.now() });
+    if (navigator.vibrate) navigator.vibrate(40);
+    chime(180, .06, .3, "sawtooth");
+    if (!assist && --lives <= 0) finish(false);
+  }
+
+  function drawCity(x, name, glow) {
+    const gy = ground();
+    c.fillStyle = "#1b0c20";
+    const bw = [14, 22, 12, 26, 16, 20, 12];
+    let xx = x - 70;
+    bw.forEach((w, i) => { const h = 18 + ((i * 37) % 30); c.fillRect(xx, gy - h, w - 2, h); xx += w; });
+    c.fillStyle = `rgba(255,210,140,${.35 + glow * .5})`;
+    for (let i = 0; i < 14; i++) c.fillRect(x - 66 + (i * 53) % 118, gy - 8 - (i * 29) % 34, 2, 2);
+    c.fillStyle = "rgba(248,234,238,.75)"; c.font = "12px Manrope, sans-serif"; c.textAlign = "center";
+    c.fillText(name, x - 10, gy + 20);
+  }
+
+  function frame(now) {
+    if (!running) return;
+    const dt = Math.min(.05, (now - last) / 1000); last = now; t += dt;
+    const p = Math.min(1, t / DUR), speed = 210 + p * 110;
+
+    // физика
+    vy += Math.min(1500, H * 2) * dt; y += vy * dt;
+    if (y < 70) { y = 70; vy = Math.max(vy, 0); }
+    if (y > ground() - 14) { y = ground() - 14; vy = -Math.min(380, H * .5); hit(); }
+
+    // препятствия
+    if (t < DUR - 4 && t > 1.2 && t >= spawnAt) { spawn(); spawnAt = t + Math.max(1.05, 1.6 - p * .6); }
+    for (const o of obs) o.x -= speed * dt;
+    for (const g of gems) g.x -= speed * dt;
+    obs = obs.filter(o => o.x > -80); gems = gems.filter(g => g.x > -40 && !g.got);
+    const X = hx();
+    for (const o of obs) for (const pf of o.puffs) {
+      if (Math.hypot(o.x + pf.dx - X, pf.y - y) < pf.r + 10) { hit(); break; }
+    }
+    for (const g of gems) if (Math.hypot(g.x - X, g.y - y) < 26) {
+      g.got = true; caught++; chime(990 + caught % 5 * 110, .05, .6);
+      fx.push({ txt: "✦", x: g.x, y: g.y, t: performance.now() });
+    }
+
+    // фон
+    const bg = c.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, "#160a20"); bg.addColorStop(1, `rgb(${40 + p * 30},${16 + p * 10},${44})`);
+    c.fillStyle = bg; c.fillRect(0, 0, W, H);
+    for (const [sx, sy, z] of sky) {
+      c.fillStyle = `rgba(255,255,255,${.25 + .4 * Math.abs(Math.sin(now / 900 + sx * 20))})`;
+      c.fillRect(((sx * W - t * 14 * z) % W + W) % W, sy * (H - 80), z, z);
+    }
+    // земля и холмы
+    c.fillStyle = "#130816";
+    c.beginPath(); c.moveTo(0, H);
+    for (let x = 0; x <= W + 20; x += 20) c.lineTo(x, ground() - 6 - 8 * Math.sin((x + t * speed * .4) / 90));
+    c.lineTo(W, H); c.fill();
+    c.strokeStyle = "rgba(255,107,134,.25)"; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(0, ground()); c.lineTo(W, ground()); c.stroke();
+    // города
+    const startX = X - t * speed * .6;
+    if (startX > -120) drawCity(startX, MY_CITY, 0);
+    if (t > DUR - 5) drawCity(W + 40 - (t - (DUR - 5)) / 5 * (W + 40 - X - 30), HER_CITY, (t - (DUR - 5)) / 5);
+
+    // тучи
+    for (const o of obs) for (const pf of o.puffs) {
+      const g = c.createRadialGradient(o.x + pf.dx - pf.r * .3, pf.y - pf.r * .3, 2, o.x + pf.dx, pf.y, pf.r);
+      g.addColorStop(0, "#5a3a66"); g.addColorStop(1, "#2a1532");
+      c.fillStyle = g; c.beginPath(); c.arc(o.x + pf.dx, pf.y, pf.r, 0, Math.PI * 2); c.fill();
+    }
+    for (const o of obs) if (o.zap && (now / 140 | 0) % 9 === 0 && o.puffs.length) {
+      const pf = o.puffs[(now / 700 | 0) % o.puffs.length];
+      c.strokeStyle = "rgba(255,230,160,.8)"; c.lineWidth = 2; c.beginPath();
+      c.moveTo(o.x + pf.dx, pf.y); c.lineTo(o.x + pf.dx - 6, pf.y + 14); c.lineTo(o.x + pf.dx + 4, pf.y + 16); c.lineTo(o.x + pf.dx - 4, pf.y + 32); c.stroke();
+    }
+    // звёздочки
+    c.textAlign = "center"; c.textBaseline = "middle";
+    for (const g of gems) {
+      c.save(); c.shadowColor = "#ffe7a3"; c.shadowBlur = 12; c.fillStyle = "#ffe7a3";
+      c.font = "20px serif"; c.fillText("✦", g.x, g.y + Math.sin(now / 300 + g.x) * 3); c.restore();
+    }
+
+    // сердечко и хвост
+    const hurt = performance.now() < hurtUntil, tilt = Math.max(-.5, Math.min(.6, vy / 900));
+    if (!hurt || (now / 90 | 0) % 2) {
+      c.save(); c.translate(X, y); c.rotate(tilt);
+      c.shadowColor = ACC; c.shadowBlur = 18; c.fillStyle = ACC; heartPath(c, 0, 4, 16); c.fill();
+      c.restore();
+    }
+    if (assist) {
+      c.save(); c.globalAlpha = .9; c.shadowColor = "#9fd8ff"; c.shadowBlur = 12; c.fillStyle = "#cfe9ff";
+      heartPath(c, X - 34, y + 14 + Math.sin(now / 200) * 4, 10); c.fill(); c.restore();
+    }
+    for (let i = fx.length - 1; i >= 0; i--) {
+      const f = fx[i], a = (performance.now() - f.t) / 900;
+      if (a >= 1) { fx.splice(i, 1); continue; }
+      c.globalAlpha = 1 - a; c.fillStyle = "#fff"; c.font = "16px Manrope, sans-serif";
+      c.fillText(f.txt, f.x, f.y - 26 - a * 26); c.globalAlpha = 1;
+    }
+
+    // шкала пути
+    const bx = 20, bw = W - 40, by = 34;
+    c.fillStyle = "rgba(255,255,255,.12)"; c.fillRect(bx, by, bw, 3);
+    c.fillStyle = ACC; c.fillRect(bx, by, bw * p, 3);
+    c.save(); c.shadowColor = ACC; c.shadowBlur = 10; c.fillStyle = ACC; heartPath(c, bx + bw * p, by + 2, 7); c.fill(); c.restore();
+    c.font = "11px Manrope, sans-serif"; c.fillStyle = "rgba(248,234,238,.7)";
+    c.textAlign = "left"; c.fillText(MY_CITY, bx, by + 18);
+    c.textAlign = "right"; c.fillText(HER_CITY, bx + bw, by + 18);
+    c.textAlign = "center"; c.fillStyle = "#f8eaee"; c.font = "600 14px Manrope, sans-serif";
+    c.fillText(`осталось ${kmLeft().toLocaleString("ru-RU")} км`, W / 2, by + 18);
+    c.font = "15px serif"; c.fillStyle = ACC; c.textAlign = "left";
+    c.fillText(assist ? "вдвоём" : "♥".repeat(lives) + "♡".repeat(3 - lives), bx, by + 40);
+    c.textAlign = "right"; c.fillStyle = "#ffe7a3"; c.font = "13px Manrope, sans-serif";
+    c.fillText(`✦ ${caught}`, bx + bw, by + 40);
+
+    if (t >= DUR) return finish(true);
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start(help = false) {
+    assist = help === true;
+    [W, H] = fitCanvas(cv);
+    t = 0; y = H * .45; vy = 0; lives = 3; hurtUntil = 0; obs = []; gems = []; spawnAt = 0; caught = 0; bumps = 0; fx = [];
+    panel.classList.add("hidden");
+    running = true; last = performance.now();
+    cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
+  }
+  function finish(won) {
+    running = false; cancelAnimationFrame(raf);
+    const left = kmLeft();
+    if (!won) {
+      const best = Math.min(load("fly-best", KM), left); store("fly-best", best);
+      panel.innerHTML = `
+        <h2>Ничего,<br><em>я всё равно долечу</em></h2>
+        <p>Осталось всего ${left.toLocaleString("ru-RU")} км${best < left ? ` · лучший раз: ${best.toLocaleString("ru-RU")} км` : ""}</p>
+        <p>Можем полететь вместе: я буду рядом и тучи нам не страшны</p>
+        <div class="row"><button id="flyHelp">Лететь вместе</button><button id="flyAgain">Ещё раз</button></div>
+        <div class="row"><button id="flyQuit" style="border-color:var(--line)">Выйти</button></div>`;
+      panel.classList.remove("hidden");
+      $("flyHelp").onclick = () => start(true); $("flyAgain").onclick = () => start(false); $("flyQuit").onclick = close;
+      return;
+    }
+    store("fly-best", 0);
+    chime(784, .06, 1.4); setTimeout(() => chime(988, .06, 1.4), 180); setTimeout(() => chime(1175, .06, 1.8), 360);
+    panel.innerHTML = `
+      <div class="big">♥</div>
+      <h2>${assist ? "Долетели <em>вместе</em>" : "Долетел <em>до тебя</em>"}</h2>
+      <p>${KM.toLocaleString("ru-RU")} км · ✦ ${caught} · ${bumps ? `тучек задето: ${bumps}` : "ни одной тучки"}</p>
+      <p class="note">${esc(FLIGHT_NOTE).replace(/\n/g, "<br>")}</p>
+      <div class="row"><button id="flyAgain">Ещё раз</button><button id="flyQuit">Выйти</button></div>`;
+    panel.classList.remove("hidden");
+    $("flyAgain").onclick = () => start(assist); $("flyQuit").onclick = close;
+  }
+  function open() {
+    box.classList.remove("hidden");
+    [W, H] = fitCanvas(cv);
+    c.fillStyle = "#0b0610"; c.fillRect(0, 0, W, H);
+    panel.innerHTML = `
+      <h2>Долететь <em>до тебя</em></h2>
+      <p>Нужно донести сердечко из ${MY_CITY} в ${HER_CITY}, ${KM.toLocaleString("ru-RU")} км<br>
+         Нажимай на экран, чтобы оно взлетало, и облетай тучи<br>
+         Звёздочки по пути можно собирать<br>
+         На клавиатуре: пробел или ↑</p>
+      <div class="row"><button id="flyGo">Лететь</button></div>`;
+    panel.classList.remove("hidden");
+    $("flyGo").onclick = () => start(false);
+  }
+  function close() {
+    running = false; cancelAnimationFrame(raf);
+    box.classList.add("hidden");
+  }
+  cv.addEventListener("pointerdown", e => { e.preventDefault(); flap(); });
+  addEventListener("keydown", e => {
+    if (box.classList.contains("hidden")) return;
+    if (e.key === " " || e.key === "ArrowUp") { e.preventDefault(); flap(); }
+    if (e.key === "Escape") close();
+  });
+  addEventListener("resize", () => { if (!box.classList.contains("hidden")) [W, H] = fitCanvas(cv); });
+  $("flyExit").onclick = close;
+  return { open };
+})();
+
+// зажать планету на 2 секунды
+(() => {
+  let timer = 0, fired = false;
+  const cancel = () => { clearTimeout(timer); cv.classList.remove("holding"); };
+  cv.addEventListener("pointerdown", () => {
+    fired = false; cv.classList.add("holding");
+    timer = setTimeout(() => {
+      fired = true; cv.classList.remove("holding");
+      if (navigator.vibrate) navigator.vibrate([20, 60, 20]);
+      Flight.open(); egg("flight", "Нашла дорогу ко мне");
+    }, 2000);
+  });
+  ["pointerup", "pointerleave", "pointercancel"].forEach(ev => cv.addEventListener(ev, cancel));
+  cv.addEventListener("contextmenu", e => e.preventDefault());
+  // после долгого нажатия не отправлять обычные сердечки
+  cv.addEventListener("click", e => { if (fired) { e.stopImmediatePropagation(); fired = false; } }, true);
+})();
+
+// ===== пасхалка 9: «Наше созвездие» (поймать падающую звезду) =====
+const Constellation = (() => {
+  const box = $("cons"), cv = $("consc"), c = cv.getContext("2d"), panel = $("consPanel");
+  let W = 0, H = 0, raf = 0, level = 0, stars = [], order = [], step = 0, lit = [], done = false,
+      doneAt = 0, lastTap = 0, shake = null, bg = [], finale = false;
+
+  function heartPts() {
+    const pts = [];
+    for (let k = 0; k <= 12; k++) {
+      const a = k / 12 * Math.PI * 2;
+      pts.push([16 * Math.sin(a) ** 3 / 17, (13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)) / 17 + .1]);
+    }
+    return [pts];
+  }
+  function layout(strokes, cx, cy, r) {
+    const key = p => p.map(v => Math.round(v * 1000) || 0).join(",");
+    const idx = new Map(), list = [], seq = [];
+    strokes.forEach(s => s.forEach((p, i) => {
+      const k = key(p);
+      if (!idx.has(k)) { idx.set(k, list.length); list.push({ x: cx + p[0] * r, y: cy - p[1] * r, tw: Math.random() * 6 }); }
+      seq.push({ i: idx.get(k), up: i === 0 });
+    }));
+    return { list, seq };
+  }
+  function build() {
+    const L = CONSTELLATIONS[level], r = Math.min(W, H) * .32, cx = W / 2, cy = H * .48;
+    const strokes = L.shape === "heart" ? heartPts() : L.strokes;
+    const { list, seq } = layout(strokes, cx, cy, r);
+    stars = list; order = seq; step = 0; lit = []; done = false; lastTap = performance.now();
+  }
+  function bgStars() {
+    bg = Array.from({ length: 160 }, () => [Math.random() * W, Math.random() * H, Math.random() * 1.4 + .3, Math.random() * 6]);
+  }
+  const NOTES = [523, 587, 659, 784, 880, 1047, 1175, 1319, 1568, 1760];
+
+  function tap(x, y) {
+    if (finale) return;
+    if (done) { if (performance.now() - doneAt > 1200) next(); return; }
+    const target = order[step];
+    let best = -1, bd = 1e9;
+    stars.forEach((s, i) => { const d = Math.hypot(s.x - x, s.y - y); if (d < bd) { bd = d; best = i; } });
+    if (bd > 38) return;
+    if (best !== target.i) { shake = { i: best, t: performance.now() }; chime(220, .03, .25, "triangle"); return; }
+    lit.push({ from: target.up ? -1 : order[step - 1].i, to: target.i, t: performance.now() });
+    chime(NOTES[step % NOTES.length], .07, 1.4);
+    step++; lastTap = performance.now();
+    if (navigator.vibrate) navigator.vibrate(10);
+    while (step < order.length && order[step].up && order[step].i === order[step - 1].i) step++;
+    if (step >= order.length) {
+      done = true; doneAt = performance.now();
+      setTimeout(() => { chime(784, .05, 2); chime(1175, .04, 2.2); }, 250);
+    }
+  }
+  function next() {
+    level++;
+    if (level >= CONSTELLATIONS.length) return showFinale();
+    build();
+  }
+  function showFinale() {
+    finale = true;
+    // сердце сверху, остальные под ним
+    const r = Math.min(W * .17, H * .11);
+    const spots = [[W / 2, H * .25], [W * .29, H * .52], [W * .71, H * .52]];
+    stars = []; lit = [];
+    CONSTELLATIONS.forEach((L, k) => {
+      const strokes = L.shape === "heart" ? heartPts() : L.strokes;
+      const [sx, sy] = spots[k] || [W / 2, H * .4];
+      const { list, seq } = layout(strokes, sx, sy, k ? r * .9 : r * 1.2);
+      const base = stars.length;
+      stars.push(...list);
+      seq.forEach((s, j) => { if (!s.up) lit.push({ from: base + seq[j - 1].i, to: base + s.i, t: performance.now() + k * 500 + j * 60 }); });
+    });
+    store("cons-done", true);
+    setTimeout(() => {
+      panel.classList.add("cons-end");
+      panel.innerHTML = `
+        <p class="note">${esc(CONS_FINAL).replace(/\n/g, "<br>")}</p>
+        <div class="row"><button id="consAgain">Ещё раз</button><button id="consQuit">Выйти</button></div>`;
+      panel.classList.remove("hidden");
+      $("consAgain").onclick = () => begin(); $("consQuit").onclick = close;
+    }, 2600);
+  }
+
+  function frame(now) {
+    if (box.classList.contains("hidden")) return;
+    const g = c.createRadialGradient(W / 2, H * .45, 10, W / 2, H * .45, Math.max(W, H) * .8);
+    g.addColorStop(0, "#1f0d2a"); g.addColorStop(1, "#07040b");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    for (const [x, y, z, tw] of bg) {
+      c.fillStyle = `rgba(255,255,255,${.15 + .35 * Math.abs(Math.sin(now / 1400 + tw))})`;
+      c.fillRect(x, y, z, z);
+    }
+    // линии
+    c.lineCap = "round";
+    for (const l of lit) {
+      if (l.from < 0) continue;
+      const a = stars[l.from], b = stars[l.to], p = Math.max(0, Math.min(1, (now - l.t) / 450));
+      if (p <= 0) continue;
+      c.save(); c.strokeStyle = finale || done ? "rgba(255,214,228,.9)" : "rgba(255,170,195,.75)";
+      c.shadowColor = ACC; c.shadowBlur = done || finale ? 14 : 8; c.lineWidth = done || finale ? 2.2 : 1.6;
+      c.beginPath(); c.moveTo(a.x, a.y); c.lineTo(a.x + (b.x - a.x) * p, a.y + (b.y - a.y) * p); c.stroke(); c.restore();
+    }
+    // звёзды
+    const target = !done && !finale && order[step] ? order[step].i : -1;
+    const idle = now - lastTap > 2500;
+    stars.forEach((s, i) => {
+      const on = finale || lit.some(l => l.to === i);
+      let x = s.x;
+      if (shake && shake.i === i) {
+        const a = (now - shake.t) / 400; if (a < 1) x += Math.sin(a * 30) * 5 * (1 - a); else shake = null;
+      }
+      const tw = .75 + .25 * Math.sin(now / 500 + s.tw);
+      let r = on ? 3.6 : 2.6;
+      if (i === target) r += (idle ? 2.2 : .8) * (.5 + .5 * Math.sin(now / 260));
+      c.save(); c.shadowColor = on ? "#ffd6e4" : "#fff"; c.shadowBlur = on ? 16 : 8;
+      c.fillStyle = on ? "#fff" : `rgba(255,255,255,${.55 * tw + .2})`;
+      c.beginPath(); c.arc(x, s.y, r, 0, Math.PI * 2); c.fill(); c.restore();
+    });
+    // подписи
+    c.textAlign = "center"; c.textBaseline = "middle";
+    if (!finale) {
+      const L = CONSTELLATIONS[level];
+      c.fillStyle = "rgba(248,234,238,.55)"; c.font = "12px Manrope, sans-serif";
+      c.fillText(`созвездие ${level + 1} из ${CONSTELLATIONS.length}`, W / 2, 60);
+      if (done) {
+        const a = Math.min(1, (now - doneAt) / 900);
+        c.globalAlpha = a; c.fillStyle = "#f8eaee";
+        // подпись переносится по словам, чтобы влезать в экран
+        c.font = `italic ${Math.min(20, W / 20)}px 'Cormorant Garamond', serif`;
+        const lines = [];
+        for (const para of L.caption.split("\n")) {
+          let cur = "";
+          for (const w of para.split(" ")) {
+            const t = cur ? cur + " " + w : w;
+            if (cur && c.measureText(t).width > W * .86) { lines.push(cur); cur = w; } else cur = t;
+          }
+          lines.push(cur);
+        }
+        const ny = Math.min(H * .78, H - 70 - 34 - lines.length * 24);
+        c.font = `${Math.min(30, W / 14)}px 'Cormorant Garamond', serif`;
+        c.fillText(L.name, W / 2, ny);
+        c.font = `italic ${Math.min(20, W / 20)}px 'Cormorant Garamond', serif`; c.fillStyle = "#d9c2ff";
+        lines.forEach((ln, k) => c.fillText(ln, W / 2, ny + 34 + k * 24));
+        if (now - doneAt > 1200) {
+          c.fillStyle = "rgba(248,234,238,.5)"; c.font = "12px Manrope, sans-serif";
+          c.fillText("нажми, чтобы продолжить", W / 2, H - 34);
+        }
+        c.globalAlpha = 1;
+      } else if (step === 0) {
+        c.fillStyle = "rgba(248,234,238,.6)"; c.font = "13px Manrope, sans-serif";
+        c.fillText("соединяй звёзды по порядку, первая мерцает", W / 2, H - 40);
+      }
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  function begin() {
+    panel.classList.add("hidden"); panel.classList.remove("cons-end");
+    finale = false; level = 0; build();
+  }
+  function open() {
+    box.classList.remove("hidden");
+    [W, H] = fitCanvas(cv); bgStars();
+    finale = false; level = 0; stars = []; lit = []; done = false; order = [];
+    panel.classList.remove("cons-end");
+    panel.innerHTML = `
+      <h2>Наше <em>созвездие</em></h2>
+      <p>Ты поймала падающую звезду, значит, можно нарисовать на небе что-то своё<br>
+         Соединяй звёзды по порядку<br>Если потеряешься, нужная звезда сама подмигнёт</p>
+      <div class="row"><button id="consGo">Начать</button></div>`;
+    panel.classList.remove("hidden");
+    $("consGo").onclick = begin;
+    cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
+  }
+  function close() { cancelAnimationFrame(raf); box.classList.add("hidden"); }
+  cv.addEventListener("pointerdown", e => { e.preventDefault(); tap(e.clientX, e.clientY); });
+  addEventListener("keydown", e => { if (!box.classList.contains("hidden") && e.key === "Escape") close(); });
+  addEventListener("resize", () => {
+    if (box.classList.contains("hidden")) return;
+    [W, H] = fitCanvas(cv); bgStars();
+    if (finale) { finale = false; showFinale(); } else if (order.length) build();
+  });
+  $("consExit").onclick = close;
+  return { open };
+})();
+
+// поймать падающую звезду: нажать рядом с ней, пока она летит
+document.addEventListener("pointerdown", e => {
+  if (!$("game").classList.contains("hidden") || !$("fly").classList.contains("hidden") || !$("cons").classList.contains("hidden")) return;
+  for (const s of document.querySelectorAll(".shoot")) {
+    const r = s.getBoundingClientRect();
+    if (e.clientX > r.left - 30 && e.clientX < r.right + 30 && e.clientY > r.top - 30 && e.clientY < r.bottom + 30) {
+      s.remove(); Constellation.open(); egg("sky", "Поймала падающую звезду"); return;
+    }
+  }
+}, { capture: true });
+
 // сброс роз
 let rrArmed = false, rrTimer;
 $("resetRoses").onclick = () => {
@@ -1432,6 +1865,8 @@ const HINTS = [
   ["choc", "Кое-кто внизу конвертов что-то держит в лапках"],
   ["night", "Загляни сюда, когда тебе уже давно пора спать"],
   ["game", "Расстояние между нами не просто цифры, постучи по нему"],
+  ["flight", "Планету можно не только тыкать, но и подержать"],
+  ["sky", "Загадай желание: поймай падающую звезду"],
 ];
 function showHints() {
   $("hints").innerHTML = HINTS.map(([id, h], i) =>
