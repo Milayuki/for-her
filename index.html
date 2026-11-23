@@ -329,12 +329,12 @@ const FLIGHT_NOTE = `Вот так и я: сколько бы ни было ту
 
 // созвездия: координаты от -1 до 1, каждая линия рисуется по порядку точек
 const CONSTELLATIONS = [
-  { name: "Сердце", shape: "heart", caption: "Это моё\nОно и так давно у тебя" },
-  { name: "Роза", caption: "Не красная, я помню", strokes: [
+  { name: "Сердце", shape: "heart", caption: "Мое сердечко\nОно давно принадлежит тебе, хихихи" },
+  { name: "Роза", caption: "Эта лаванда для тебя\nВедь ты у меня символизируешь нежность, спокойствие, гармонию и искреннюю привязанность C:", strokes: [
     [[-.42, .12], [-.55, .72], [-.22, .49], [0, .87], [.22, .49], [.55, .72], [.42, .12], [0, -.13], [-.42, .12]],
     [[0, -.13], [0, -.45], [.45, -.25], [0, -.65], [0, -.9]],
   ] },
-  { name: "К", caption: "Твоя буква\nТеперь она есть и на небе", strokes: [
+  { name: "К", caption: "Первая буква в твоей имени, как и твое имя, Кристин останется для меня памятью о тебе на всю жизнь <3", strokes: [
     [[-.45, .85], [-.45, 0], [-.45, -.85]],
     [[.5, .85], [-.45, 0], [.5, -.85]],
   ] },
@@ -1771,10 +1771,22 @@ const Constellation = (() => {
       if (done) {
         const a = Math.min(1, (now - doneAt) / 900);
         c.globalAlpha = a; c.fillStyle = "#f8eaee";
+        // подпись переносится по словам, чтобы влезать в экран
+        c.font = `italic ${Math.min(20, W / 20)}px 'Cormorant Garamond', serif`;
+        const lines = [];
+        for (const para of L.caption.split("\n")) {
+          let cur = "";
+          for (const w of para.split(" ")) {
+            const t = cur ? cur + " " + w : w;
+            if (cur && c.measureText(t).width > W * .86) { lines.push(cur); cur = w; } else cur = t;
+          }
+          lines.push(cur);
+        }
+        const ny = Math.min(H * .78, H - 70 - 34 - lines.length * 24);
         c.font = `${Math.min(30, W / 14)}px 'Cormorant Garamond', serif`;
-        c.fillText(L.name, W / 2, H * .8);
+        c.fillText(L.name, W / 2, ny);
         c.font = `italic ${Math.min(20, W / 20)}px 'Cormorant Garamond', serif`; c.fillStyle = "#d9c2ff";
-        L.caption.split("\n").forEach((ln, k) => c.fillText(ln, W / 2, H * .8 + 34 + k * 24));
+        lines.forEach((ln, k) => c.fillText(ln, W / 2, ny + 34 + k * 24));
         if (now - doneAt > 1200) {
           c.fillStyle = "rgba(248,234,238,.5)"; c.font = "12px Manrope, sans-serif";
           c.fillText("нажми, чтобы продолжить", W / 2, H - 34);
