@@ -3,16 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>100 роз</title>
+<title>Для Крис</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Manrope:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0b0610;--accent:#ff6b86;--text:#f8eaee;--muted:#b9a0aa}
+  :root{--bg:#0b0610;--accent:#ff6b86;--text:#f8eaee;--muted:#b9a0aa;--line:rgba(255,107,134,.25)}
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
+  html,body{height:100%;background:var(--bg)}
   body{background:radial-gradient(ellipse at 50% 35%,#2a1130 0%,#150a18 45%,var(--bg) 80%);
        color:var(--text);font-family:'Manrope',sans-serif;overflow:hidden}
 
-  /* звёзды, лепестки, искры */
   #sky,#petals{position:fixed;inset:0;pointer-events:none;overflow:hidden}
   #sky{z-index:0} #petals{z-index:5}
   .star{position:absolute;border-radius:50%;background:#fff;animation:twinkle ease-in-out infinite}
@@ -22,30 +21,33 @@
   @keyframes shoot{from{opacity:1;transform:rotate(-25deg) translateX(0)}
                    to{opacity:0;transform:rotate(-25deg) translateX(-320px)}}
   .petal{position:absolute;top:-30px;width:14px;height:10px;border-radius:80% 0 80% 0;
-         background:linear-gradient(135deg,#ff7a93,#9c0f2b);animation:fall linear forwards}
+         background:linear-gradient(135deg,#e2ccff,#7a4cc2);animation:fall linear forwards}
   @keyframes fall{to{transform:translate(var(--dx),110vh) rotate(var(--rot))}}
   .spark{position:fixed;width:7px;height:7px;border-radius:50%;pointer-events:none;z-index:6;
          background:radial-gradient(#fff,#ffb3c2 55%,transparent 70%);animation:fly .9s ease-out forwards}
   @keyframes fly{to{transform:translate(var(--tx),var(--ty)) scale(.2);opacity:0}}
 
-  /* экраны */
   .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
-          justify-content:center;padding:20px;transition:opacity 1s;z-index:1}
+          justify-content:center;padding:20px 16px;transition:opacity .8s;z-index:1}
   .hidden{opacity:0;pointer-events:none}
   @keyframes rise{from{opacity:0;transform:translateY(20px)}}
   h1{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(1.9rem,5.5vw,3.4rem);
      text-align:center;line-height:1.15;animation:rise 1.6s ease-out both}
   h1 em{color:var(--accent)}
-  #globe{display:block;margin:18px auto 6px;animation:rise 1.8s .3s ease-out both}
-  .sub{color:var(--muted);margin:6px 0 24px;text-align:center;font-weight:300;line-height:1.8;
+  #globe{display:block;margin:14px auto 4px;cursor:pointer;animation:rise 1.8s .3s ease-out both;touch-action:manipulation}
+  .ghint{color:var(--muted);font-size:.78rem;letter-spacing:.08em;text-align:center;min-height:1.2em;
+         animation:rise 1.6s .5s ease-out both}
+  .sub{color:var(--muted);margin:8px 0 20px;text-align:center;font-weight:300;line-height:1.8;
        font-size:.95rem;animation:rise 1.6s .6s ease-out both}
   button{font-family:inherit;cursor:pointer;border:1px solid var(--accent);background:transparent;
-         color:var(--text);padding:13px 30px;border-radius:999px;font-size:1rem;transition:.3s}
+         color:var(--text);padding:13px 26px;border-radius:999px;font-size:1rem;transition:.3s}
   button:hover{background:var(--accent);color:var(--bg)}
-  #startBtn{animation:rise 1.6s .9s ease-out both}
+  .doors{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:rise 1.6s .9s ease-out both}
 
-  /* сад */
+  .home{position:fixed;top:14px;left:14px;z-index:8;padding:8px 16px;font-size:.85rem;border-color:var(--line)}
+
   .hint{color:var(--muted);font-size:.9rem;text-align:center;margin-bottom:10px;font-weight:300}
+  .rnote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:#d9c2ff;text-align:center;max-width:420px;margin-bottom:6px;line-height:1.35}
   #bouquet{position:relative;width:var(--size);height:var(--size)}
   .rose{position:absolute;transform:translate(-50%,-50%);cursor:pointer;opacity:0}
   #bouquet.grow .rose{animation:appear .9s cubic-bezier(.2,.8,.3,1.3) var(--d) forwards}
@@ -58,71 +60,180 @@
             transition:transform 1.4s cubic-bezier(.2,.8,.25,1.15),filter 1.4s}
   .rose:hover svg{transform:rotate(var(--r)) scale(.62);filter:brightness(.8)}
   .rose.open svg{transform:rotate(calc(var(--r) + 45deg)) scale(1);
-                 filter:drop-shadow(0 3px 5px rgba(0,0,0,.55)) drop-shadow(0 0 6px rgba(255,90,120,.35))}
+                 filter:drop-shadow(0 3px 5px rgba(0,0,0,.55)) drop-shadow(0 0 6px rgba(180,140,255,.4))}
   .counter{font-family:'Cormorant Garamond',serif;font-size:1.3rem;margin-top:10px}
   .counter b{color:var(--accent);font-weight:600}
   #letterBtn{margin-top:12px}
 
-  /* окно причины */
-  .modal{position:fixed;inset:0;background:rgba(8,3,10,.7);backdrop-filter:blur(4px);z-index:4;
-         display:flex;align-items:center;justify-content:center;padding:20px;transition:opacity .6s}
-  .card{position:relative;width:min(540px,100%);background:linear-gradient(160deg,#35152a,#1a0b16);
-        border:1px solid rgba(255,107,134,.25);border-radius:24px;padding:44px 30px 32px;text-align:center;
-        transition:transform .6s;box-shadow:0 0 60px rgba(255,80,120,.12)}
+  .modal{position:fixed;inset:0;background:rgba(8,3,10,.72);backdrop-filter:blur(4px);z-index:9;
+         display:flex;align-items:center;justify-content:center;padding:16px;transition:opacity .6s}
+  .card{position:relative;width:min(560px,100%);max-height:90vh;overflow:auto;
+        background:linear-gradient(160deg,#35152a,#1a0b16);border:1px solid var(--line);border-radius:22px;
+        padding:42px 26px 28px;text-align:center;transition:transform .6s;box-shadow:0 0 60px rgba(255,80,120,.12)}
   .modal.hidden .card{transform:translateY(24px) scale(.97)}
-  .x{position:absolute;top:12px;right:14px;border:none;font-size:1.6rem;padding:4px 10px;color:var(--muted)}
+  .x{position:absolute;top:10px;right:12px;border:none;font-size:1.6rem;padding:4px 10px;color:var(--muted)}
   .x:hover{background:none;color:var(--text)}
   .num{font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:.3em;color:var(--accent)}
-  .reason{font-family:'Cormorant Garamond',serif;font-size:clamp(1.35rem,4vw,1.8rem);margin:20px 0;
-          line-height:1.4;min-height:2.8em;cursor:pointer}
+  .reason{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3.6vw,1.55rem);margin:20px 0;
+          line-height:1.5;min-height:2.8em;cursor:pointer;white-space:pre-line;text-align:left}
   .fade{opacity:0;transform:translateY(8px);transition:.7s}
   .fade.in{opacity:1;transform:none}
   .quote{font-style:italic;color:var(--muted);font-size:.95rem;border-left:2px solid var(--accent);
          padding-left:12px;text-align:left;margin:0 auto 6px;max-width:92%}
   .date{color:var(--muted);font-size:.8rem;margin:12px 0 24px;letter-spacing:.1em}
 
-  /* финал */
   .bigheart{font-size:3.2rem;color:var(--accent);margin-bottom:18px;animation:pulse 1.2s ease-in-out infinite}
   @keyframes pulse{0%,100%{transform:scale(1)}15%{transform:scale(1.2)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
   .letter{max-width:620px;font-family:'Cormorant Garamond',serif;font-size:1.35rem;line-height:1.65;
           text-align:center;white-space:pre-line;margin-bottom:32px;min-height:3em;cursor:pointer}
 
-  /* мелочи */
-  .toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);opacity:0;z-index:7;
+  /* открой, когда */
+  #env{display:block;overflow-y:auto;padding:64px 16px 56px}
+  .wrap{max-width:860px;margin:0 auto}
+  .ehead{text-align:center;margin-bottom:30px}
+  .art{font-family:ui-monospace,Menlo,Consolas,"Noto Sans Mono",monospace;white-space:pre;line-height:1.25;
+       color:#ffd3dc;font-size:.95rem;display:inline-block;text-align:left}
+  .ehead .art{margin:16px 0 12px;font-size:1.05rem}
+  .rx{max-width:520px;margin:0 auto;border:1px dashed var(--line);border-radius:14px;padding:14px 18px;
+      text-align:left;font-size:.85rem;line-height:1.7;color:var(--muted)}
+  .rx b{color:var(--text);font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .env{position:relative;aspect-ratio:1.45;border:none;border-radius:12px;padding:0;overflow:hidden;
+       background:linear-gradient(160deg,#3a1830,#231020);color:var(--text);
+       box-shadow:0 6px 20px rgba(0,0,0,.35);transition:transform .3s,box-shadow .3s}
+  .env:hover{background:linear-gradient(160deg,#3a1830,#231020);color:var(--text);
+             transform:translateY(-4px) rotate(-.6deg);box-shadow:0 10px 26px rgba(255,80,120,.18)}
+  .env::before{content:"";position:absolute;inset:0;
+       background:linear-gradient(to bottom right,transparent 49.4%,rgba(255,255,255,.06) 50%,transparent 50.6%),
+                  linear-gradient(to bottom left,transparent 49.4%,rgba(255,255,255,.06) 50%,transparent 50.6%);
+       background-size:100% 56%;background-repeat:no-repeat}
+  .seal{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:36px;height:36px;border-radius:50%;
+        background:radial-gradient(circle at 35% 35%,#ff8aa0,#a3142f);display:grid;place-items:center;
+        font-size:1rem;color:#ffe3e9;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+  .lbl{position:absolute;left:0;right:0;bottom:10px;text-align:center;font-family:'Cormorant Garamond',serif;
+       font-size:1.1rem;padding:0 8px}
+  .lbl small{display:block;font-family:'Manrope',sans-serif;font-size:.68rem;color:var(--muted);letter-spacing:.15em}
+  .env.read{opacity:.75}
+  .env.read .seal{background:transparent;border:1px solid var(--line);color:var(--muted)}
+  .env.locked .seal{background:#2a1222;border:1px dashed var(--line);color:var(--muted)}
+  .env.locked .lbl{color:var(--muted)}
+  .when{font-size:.75rem;letter-spacing:.25em;color:var(--accent);text-transform:uppercase}
+  #eArt{margin:18px 0;font-size:1rem}
+  .txt{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,4vw,1.45rem);line-height:1.55;text-align:left;white-space:pre-line}
+  .sign{margin-top:18px;text-align:right;color:var(--muted);font-style:italic;font-family:'Cormorant Garamond',serif;font-size:1.1rem}
+  .boop{display:inline-block;margin-top:14px;cursor:pointer;user-select:none}
+  .efoot{margin-top:40px;text-align:center;color:var(--muted);font-size:.8rem;line-height:1.8}
+  .efoot .art{font-size:.9rem;margin-bottom:10px}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);opacity:0;z-index:10;
          background:#35152a;border:1px solid rgba(255,107,134,.35);padding:12px 22px;border-radius:999px;
          transition:.6s;font-size:.95rem;text-align:center;max-width:90vw;pointer-events:none}
   .toast.show{opacity:1;transform:translate(-50%,0)}
   .music{position:fixed;bottom:16px;left:16px;z-index:7;width:44px;height:44px;padding:0;font-size:1.1rem}
   .music.off{opacity:.4}
+  @media (max-width:420px){.lbl{font-size:1rem;bottom:8px}.seal{width:32px;height:32px}}
+  .eggs{color:var(--muted);font-size:.78rem;margin-top:16px;text-align:center;letter-spacing:.05em;animation:rise 1.6s 1.1s ease-out both}
+  .eggs b{color:var(--accent);font-weight:600}
+  .eggbtns{display:flex;gap:8px;justify-content:center;margin-top:8px;animation:rise 1.6s 1.2s ease-out both}
+  .mini{padding:6px 14px;font-size:.75rem;border-color:var(--line);color:var(--muted)}
+  .mini:hover{color:var(--bg)}
+  .hints{list-style:none;text-align:left;margin-top:18px;display:grid;gap:12px}
+  .hints li{display:flex;gap:12px;align-items:flex-start;font-family:'Cormorant Garamond',serif;font-size:1.15rem;line-height:1.4}
+  .hints li i{font-style:normal;flex:0 0 22px;height:22px;border-radius:50%;border:1px solid var(--line);
+              display:grid;place-items:center;font-size:.75rem;color:var(--muted);font-family:'Manrope',sans-serif;margin-top:3px}
+  .hints li.ok{color:var(--muted)}
+  .hints li.ok i{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+  h1 em,.counter,#sub,.ehead .art,.efoot .art{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+  :root.green{--accent:#4fd18b;--line:rgba(79,209,139,.3)}
+  .choc{position:absolute;top:-30px;font-size:22px;animation:fall linear forwards}
+
+  /* досье */
+  #dos{display:block;overflow-y:auto;padding:64px 16px 56px}
+  .stamp{display:inline-block;border:2px solid var(--accent);color:var(--accent);padding:4px 12px;border-radius:6px;
+         font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;transform:rotate(-4deg);margin-bottom:14px}
+  .ehead .rx{margin-top:16px}
+  .dgrid{display:block}
+  .dgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  .fact{position:relative;text-align:left;border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;
+        background:linear-gradient(160deg,#2c1226,#1a0b16);cursor:pointer;min-height:96px;transition:transform .3s}
+  .fact:hover{transform:translateY(-2px)}
+  .fact .ft{font-family:'Cormorant Garamond',serif;font-size:1.25rem;margin-bottom:6px}
+  .fact .fx{color:var(--muted);font-size:.9rem;line-height:1.55;white-space:pre-line;transition:filter .5s,opacity .5s}
+  .fact .fn{position:absolute;top:12px;right:14px;font-size:.7rem;color:var(--muted);letter-spacing:.1em}
+  .fact:not(.open) .fx{filter:blur(6px);opacity:.6;user-select:none}
+  .fact:not(.open)::after{content:"рассекретить";position:absolute;left:16px;bottom:12px;font-size:.68rem;letter-spacing:.2em;
+        color:var(--accent);text-transform:uppercase}
+  .dfoot{text-align:center;color:var(--muted);font-size:.9rem;margin-top:30px;line-height:1.7}
+  .file{max-width:560px;margin:18px auto 0;border:1px solid var(--line);border-radius:14px;padding:6px 16px;
+        background:rgba(255,255,255,.02);text-align:left}
+  .frow{display:flex;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:.9rem}
+  .frow:last-child{border-bottom:none}
+  .frow span{flex:0 0 92px;color:var(--muted);font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;padding-top:2px}
+  .frow b{font-weight:400}
+  .dhint{color:var(--muted);font-size:.8rem;margin-top:14px;letter-spacing:.05em}
+  .dsec{font-family:'Cormorant Garamond',serif;font-size:1.6rem;margin:30px 0 12px;display:flex;align-items:center;gap:12px}
+  .dsec::after{content:"";flex:1;height:1px;background:var(--line)}
+  .dsec small{font-family:'Manrope',sans-serif;font-size:.72rem;color:var(--muted);letter-spacing:.1em}
+
+  /* мини-игра */
+  #game{position:fixed;inset:0;z-index:20;background:#0b0610;transition:opacity .5s}
+  #gc{width:100%;height:100%;display:block;touch-action:none}
+  .gpanel{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+          text-align:center;padding:24px 16px;background:rgba(11,6,16,.86);transition:opacity .4s}
+  .gpanel h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(2rem,7vw,3rem);line-height:1.1}
+  .gpanel h2 em{color:var(--accent)}
+  .gpanel p{color:var(--muted);line-height:1.7;margin:12px 0;max-width:420px;font-size:.92rem}
+  .gpanel .big{font-family:'Cormorant Garamond',serif;font-size:4rem;color:var(--accent);line-height:1}
+  .gpanel .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+  .gx{position:absolute;top:12px;right:12px;z-index:2;width:40px;height:40px;padding:0;font-size:1.3rem;border-color:var(--line)}
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <radialGradient id="pg" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="50">
-      <stop offset="0" stop-color="#4a0312"/>
-      <stop offset=".45" stop-color="#a80f2e"/>
-      <stop offset="1" stop-color="#ff5e7c"/>
+      <stop offset="0" stop-color="#2e1450"/>
+      <stop offset=".45" stop-color="#7a4cc2"/>
+      <stop offset="1" stop-color="#dcc4ff"/>
     </radialGradient>
   </defs>
 </svg>
 <div id="sky"></div>
 <div id="petals"></div>
 <div class="toast" id="toast"></div>
-<button class="music hidden" id="musicBtn">♪</button>
+<button class="music" id="musicBtn" title="музыка">♪</button>
+<button class="home hidden" id="homeBtn">← на главную</button>
 
+<!-- главная -->
 <section class="screen" id="intro">
-  <h1>100 роз — 100 причин,<br>почему я <em>тебя люблю</em></h1>
+  <h1>Для тебя, <em>Зеленоглазка</em></h1>
   <canvas id="globe"></canvas>
+  <p class="ghint" id="ghint">на планету можно нажимать</p>
   <p class="sub" id="sub"></p>
-  <button id="startBtn">Войти в сад 🌹</button>
+  <div class="doors">
+    <button id="toRoses">101 причина</button>
+    <button id="toEnv">Открой, когда…</button>
+  </div>
+  <p class="eggs" id="eggs"></p>
+  <div class="eggbtns"><button class="mini" id="hintBtn">подсказки</button><button class="mini" id="resetBtn">сбросить пасхалки</button></div>
 </section>
 
+<div class="modal hidden" id="hModal">
+  <div class="card">
+    <button class="x" id="hClose">×</button>
+    <div class="num">ПОДСКАЗКИ</div>
+    <ul class="hints" id="hints"></ul>
+  </div>
+</div>
+
+<!-- розы -->
 <section class="screen hidden" id="garden">
-  <p class="hint">Нажимай на бутоны: каждый распускается и хранит одну причину</p>
+  <p class="rnote">Я запомнил, что ты не любишь красные розы, поэтому здесь их нет ни одной</p>
+  <p class="hint">Нажми на любую розу</p>
   <div id="bouquet"></div>
   <p class="counter" id="counter"></p>
-  <button id="letterBtn" class="hidden">Открыть письмо ♥</button>
+  <button id="letterBtn" class="hidden">Письмо</button>
+  <button class="mini" id="resetRoses" style="margin-top:10px">сбросить розы</button>
 </section>
 
 <div class="modal hidden" id="modal">
@@ -132,68 +243,429 @@
     <p class="reason" id="reason"></p>
     <p class="quote fade" id="quote"></p>
     <p class="date fade" id="date"></p>
-    <button id="nextBtn">Следующая роза →</button>
+    <button id="nextBtn">Дальше</button>
   </div>
 </div>
 
 <section class="screen hidden" id="final">
   <div class="bigheart">♥</div>
   <p class="letter" id="letter"></p>
-  <button id="backBtn">Вернуться к розам</button>
+  <div class="doors" style="animation:none">
+    <button id="backBtn">Назад к розам</button>
+    <button id="finalToEnv">Открой, когда…</button>
+  </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+<!-- досье -->
+<section class="screen hidden" id="dos">
+  <div class="wrap">
+    <div class="ehead">
+      <div class="stamp">совершенно секретно</div>
+      <h1>Досье на <em>Зеленоглазку</em></h1>
+      <div class="file">
+        <div class="frow"><span>Объект</span><b>Зеленоглазка, она же Великая</b></div>
+        <div class="frow"><span>Ареал</span><b>Калининград, тёмные маленькие места, под пледиком</b></div>
+        <div class="frow"><span>Активна</span><b>ночью, «энергия только перед сном»</b></div>
+        <div class="frow"><span>Опасность</span><b>милая, но кусается</b></div>
+        <div class="frow"><span>Статус</span><b>занята, мной</b></div>
+        <div class="frow"><span>Составил</span><b>твой рабик, путём долгого и очень внимательного наблюдения</b></div>
+      </div>
+      <p class="dhint">нажимай на карточки, чтобы рассекретить</p>
+    </div>
+    <div class="dgrid" id="dgrid"></div>
+    <p class="dfoot" id="dfoot"></p>
+  </div>
+</section>
+
+<!-- открой, когда -->
+<section class="screen hidden" id="env">
+  <div class="wrap">
+    <div class="ehead">
+      <h1>Открой, <em>когда…</em></h1>
+      <div class="art">       へ        ╱|
+    ૮  - ՛)  ♡ (` - 7.
+    / ⁻ ៸|     |、⁻〵
+ 乀 (ˍ, ل ل      じしˍ,)ノ</div>
+      <div class="rx">
+        <b>Показания к применению:</b> открывать строго по ситуации, а не все сразу из любопытства, я узнаю<br>
+        <b>Дозировка:</b> один конверт за раз, повторно можно сколько угодно<br>
+        <b>Побочные эффекты:</b> улыбка, желание написать мне, внезапное «ну ты дурак» вслух<br>
+        <b>Изготовитель:</b> твой самый преданный рабик
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="efoot">
+      <div class="art">/)/)  (\(\
+(. .) (. .)
+( づ🍫 ⊂ )</div>
+      <div>сделано вручную, для тебя, Зеленоглазка</div>
+    </div>
+  </div>
+</section>
+
+<div class="modal hidden" id="eModal">
+  <div class="card">
+    <button class="x" id="eClose">×</button>
+    <div class="when" id="eWhen"></div>
+    <div class="art" id="eArt"></div>
+    <p class="txt" id="eTxt"></p>
+    <p class="sign">твой</p>
+  </div>
+</div>
+
+<!-- мини-игра -->
+<div id="game" class="hidden">
+  <canvas id="gc"></canvas>
+  <div class="gpanel" id="gPanel"></div>
+  <button class="gx" id="gExit">×</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
 <script>
-/* ================= ЗАПОЛНИТЬ ================= */
-const HER_NAME   = "Имя";
+// ===== настройки =====
+const HER_NAME   = "Кристине";
 const MY_CITY    = "Атырау";
 const HER_CITY   = "Калининград";
 const MY_COORDS  = [51.92, 47.10];   // [долгота, широта]
 const HER_COORDS = [20.51, 54.71];
 const MY_TZ      = "Asia/Atyrau";
 const HER_TZ     = "Europe/Kaliningrad";
-const START_DATE = "";               // дата начала отношений, например "2021-11-23"
-const MUSIC      = "";               // например "music.mp3" (загрузите файл в тот же репозиторий)
 
-const MILESTONES = {
-  25: "Четверть сада уже расцвела 🌸",
-  50: "Половина пути… как каждая наша встреча 🌹",
-  75: "Осталось совсем чуть-чуть ✨",
-};
+// письмо после 101 розы
+const LETTER = `Ну всё, ты открыла все сто
+Если честно, причин больше, просто сад не резиновый
 
-const LETTER = `Здесь будет твоё письмо ей.
-Напишем его вместе.`;
+Когда-то я подарил одной незнакомой девушке маленький подарок
+И подумать не мог, что потом не смогу представить ни одного дня без неё
 
+Спасибо, что ты есть, Зеленоглазка
+Люблю тебя очень очень сина <333`;
+
+// { text: "причина" }
 const REASONS = [
-  { text: "Пример: потому что ты пишешь мне «доброе утро», даже когда сама не выспалась.",
-    quote: "доброе утро, соня ☀️", date: "12.03.2022" },
-  { text: "Пример: потому что даже через тысячи километров я чувствую тебя рядом.",
-    quote: "", date: "" },
+  { text: "Потому что ты первая, с кем мне не нужно было притворяться\nЯ всю жизнь был кем-то другим, лишь бы не показывать себя настоящего\nА ты приняла меня таким, какой я есть, и я впервые смог снять маску и не бояться тебя", quote: "", date: "" },
+  { text: "Потому что рядом с тобой мне спокойно\nНе знаю, как это работает, но стоит тебе появиться, и все страхи куда-то уходят\nЯ не шутил, когда это говорил, правда", quote: "", date: "" },
+  { text: "Потому что ты честная\nТы никогда не притворяешься и всегда говоришь как есть, даже когда это сложно и тяжело\nИ поэтому я доверяю тебе больше, чем кому-либо", quote: "", date: "" },
+  { text: "Потому что ты настоящая\nТы не строишь из себя кого-то другого, ты всегда искренняя\nИ рядом с тобой я тоже учусь быть искренним", quote: "", date: "" },
+  { text: "Потому что ты появилась в моей жизни\nТы как-то спросила, что ты такого сделала, что я так к тебе привязался\nТы появилась, и этого уже было достаточно", quote: "", date: "" },
+  { text: "Потому что ты освещаешь мой путь\nРаньше я не очень понимал, куда иду\nА с тобой у меня появилось направление и близкий человек, ради которого хочется идти дальше", quote: "", date: "" },
+  { text: "Потому что благодаря тебе я расту\nВсё, кем я становлюсь сейчас, во многом твоя заслуга\nТы вложила в меня столько тепла и любви, что я просто не мог остаться прежним", quote: "", date: "" },
+  { text: "Потому что с тобой я раскрылся\nЯ всегда держал многое в себе, а с тобой впервые захотелось рассказать всё\nИ мне не было страшно, ведь для меня ты стала как старшая сестра", quote: "", date: "" },
+  { text: "Потому что ради тебя я готов на что угодно\nТы единственный человек, к которому я никогда не буду равнодушен\nЭто не громкие слова, это просто правда", quote: "", date: "" },
+  { text: "Потому что ты всегда на первом месте\nЧто бы ни происходило, работа, учёба, усталость\nТы всё равно первая, о ком я думаю", quote: "", date: "" },
+  { text: "Потому что я не могу перестать думать о тебе\nТы у меня в голове с утра и до ночи\nИ я даже не пытаюсь это исправить", quote: "", date: "" },
+  { text: "Потому что из-за тебя моё сердце бьётся чаще\nТак было с самого начала\nИ так будет всегда, сколько бы времени ни прошло", quote: "", date: "" },
+  { text: "Потому что о тебе я могу рассказывать часами и днями\nТы всегда будешь человеком, про которого мне никогда не надоест говорить", quote: "", date: "" },
+  { text: "Потому что ты у меня забрала все первые разы\nИ я хочу, чтобы все следующие тоже были с тобой", quote: "", date: "" },
+  { text: "Потому что ты самая прекрасная женщина, которую я когда-либо встречал\nЯ говорю это не для красивого словечка\nЯ правда так думаю каждый раз, когда тебя вижу", quote: "", date: "" },
+  { text: "Потому что я обожаю твой голос\nТы даже не представляешь, как мне нравится его слышать\nИногда он звучит у меня в голове весь день, и мне от этого хорошо, и эта же причина стала для меня решающим чтобы пересматривать твои стримы, или разговоры с тобой по душам", quote: "", date: "" },
+  { text: "Потому что засыпать под твой голос лучшее, что со мной бывает\nЯ всегда стараюсь не уснуть подольше\nЧтобы послушать тебя ещё хоть немного", quote: "", date: "" },
+  { text: "Потому что звонки с тобой могут идти до утра\nИ мне хочется чтобы это никогда не заканчивалось\nНастолько мне приятно тебя слушать что ты стала для меня как радио в пустыне, что только тобой я наслаждаюсь", quote: "", date: "" },
+  { text: "Потому что у тебя самые красивые глаза\nЗелёные, яркие, живые\nНа любой фотографии они сияют сильнее всего остального", quote: "", date: "" },
+  { text: "Потому что я не могу перестать на тебя смотреть\nИ каждый раз хочется сказать, какая ты красивая\nДаже если я уже говорил это пару минут назад", quote: "", date: "" },
+  { text: "Потому что я люблю твою ехидную улыбку\nЯ прямо вижу, как ты сидишь за экраном и ехидничаешь придумывая планы как насолить мне\nИ в этот момент люблю тебя ещё сильнее", quote: "", date: "" },
+  { text: "Потому что ты миленькая, даже когда злишься\nОсобенно когда злишься\nОй, кто это сказал", quote: "", date: "" },
+  { text: "Потому что ты танцуешь\nТы любишь танцы, а я мечтаю однажды увидеть, как ты танцуешь на сцене перед кучей поклонников\nА если хоть кто-то будет косо на тебя смотреть, он получит пизды", quote: "", date: "" },
+  { text: "Потому что ты прекрасна во всём\nВ том, как ты говоришь, смеёшься, рисуешь, заботишься, играешься\nВ каждой мелочи", quote: "", date: "" },
+  { text: "Потому что мне нравится, когда ты болтливая\nРассказывай мне что угодно и сколько угодно\nЯ буду слушать, всегда", quote: "", date: "" },
+  { text: "Потому что рядом с тобой я теряю мысль и просто таю\nХотел что-то сказать, посмотрел на тебя, и всё\nЗабыл все что было на уме", quote: "", date: "" },
+  { text: "Потому что ты моя звёздочка\nЕдинственная звезда на моём небе\nСамая красивая и самая яркая", quote: "", date: "" },
+  { text: "Потому что ты мой ангелочек\nЯ говорю это не просто так\nТы правда как будто спустилась с небес, чтобы меня беречь", quote: "", date: "" },
+  { text: "Потому что ты для меня самая любимая\nСамая самая самая, любимая любимая любимая\nИ это никогда не изменится", quote: "", date: "" },
+  { text: "Потому что ты рисуешь так, что я каждый раз в восторге\nТвои арты это часть тебя\nИ я люблю их так же, как люблю тебя", quote: "", date: "" },
+  { text: "Потому что я горжусь тобой\nКогда я натыкаюсь на твои арты где-то в интернете, я каждый раз улыбаюсь как дурак\nВидеть, что тебя замечают, отдельное счастье", quote: "", date: "" },
+  { text: "Потому что ты рисуешь с душой\nВ каждом твоём рисунке видно тебя\nИ мне хочется, чтобы весь мир это увидел", quote: "", date: "" },
+  { text: "Потому что ты талантливая\nТы сама этого часто не замечаешь\nНо я вижу, и буду напоминать тебе об этом всегда", quote: "", date: "" },
+  { text: "Потому что ты умная\nТы разбираешься в куче вещей, в которых я ничего не понимаю\nИ мне нравится узнавать все-все на свете от тебя", quote: "", date: "" },
+  { text: "Потому что ты помогаешь учиться о тех вещах которые я даже не знал\nЕсли бы не ты, я бы не обладал теми знаниями что имею сейчас\nА так всё получилось, и только благодаря тебе", quote: "", date: "" },
+  { text: "Потому что ты тратишь на меня своё время\nТы могла бы потратить его на что угодно\nА тратишь на меня, и я это очень ценю", quote: "", date: "" },
+  { text: "Потому что ты всегда находишь для меня что-то крутое\nИгры, музыку, всякие мелочи\nВсё, что ты мне показываешь, сразу становится моим любимым", quote: "", date: "" },
+  { text: "Потому что ты делишься со мной тем, что любишь\nМузыкой, играми, всякими мелочами\nИ всё это теперь и моё тоже, потому что пришло от тебя", quote: "", date: "" },
+  { text: "Потому что у тебя большие мечты\nИ в каждой из них я хочу быть рядом, помогать и болеть за тебя громче всех", quote: "", date: "" },
+  { text: "Потому что без тебя я даже не начинаю игры\nНовая игра, новый сезон, что угодно\nЯ жду тебя, потому что без тебя это просто не то", quote: "", date: "" },
+  { text: "Потому что победа без тебя не имеет смысла\nМне не нужно выигрывать одному\nМне нужно выигрывать вместе с тобой", quote: "", date: "" },
+  { text: "Потому что с тобой каждая игра становится воспоминанием\nИ всегда буду вспоминать твой радостный смех или улыбку из-за моих глупых действий\nХехехе", quote: "", date: "" },
+  { text: "Потому что только с тобой у меня бывают такие приятные и незабываемые моменты\nЯ писал тебе это после каждого нашего вечера\nИ напишу под этим ещё раз", quote: "", date: "" },
+  { text: "Потому что ты смеёшься так, что я смеюсь вместе с тобой\nИногда даже не понимаю над чем\nПросто твой смех самый заразительный на свете", quote: "", date: "" },
+  { text: "Потому что с тобой можно дурачиться без конца\nИ не бояться, что ты подумаешь, что я странный\nТы такая же странная, и это прекрасно", quote: "", date: "" },
+  { text: "Потому что ты не такая, как все\nТы всегда немного другая\nИ именно за это я тебя и люблю", quote: "", date: "" },
+  { text: "Потому что с тобой даже обычный вечер становится праздником\nИ какой вообще может быть праздник без тебя", quote: "", date: "" },
+  { text: "Потому что даже в игре мы умудряемся создавать воспоминания\nМелочь, а для меня одни из лучших моментов", quote: "", date: "" },
+  { text: "Потому что я знаю, что с тобой мы побываем везде\nНа всех концертах, мероприятиях, в разных городах и странах\nЯ уверен, что мы туда дойдём вдвоём", quote: "", date: "" },
+  { text: "Потому что ты умеешь рассмешить меня, когда мне совсем не до смеха\nОдна твоя фраза, и день уже не такой тяжёлый", quote: "", date: "" },
+  { text: "Потому что твоё «хмпх» и «хехе» я узнаю из тысячи\nИ каждый раз, когда вижу их, улыбаюсь", quote: "", date: "" },
+  { text: "Потому что ты заботишься обо мне\nСпрашиваешь, поел ли я, гонишь спать, ругаешься, когда я себя не берегу\nЯ никогда не думал, что кто-то будет так за меня переживать", quote: "", date: "" },
+  { text: "Потому что ты следишь, чтобы со мной всё было хорошо\nДаже в мелочах, даже в том, что я ем\nС тобой я чувствую, что обо мне правда думают", quote: "", date: "" },
+  { text: "Потому что ты гонишь меня спать\nЯ сопротивляюсь, но знаю, что ты делаешь это, потому что любишь\nИ мне от этого тепло на душе", quote: "", date: "" },
+  { text: "Потому что ты помогаешь мне, даже когда я не прошу\nТы сразу замечаешь, что мне нужна помощь\nИ помогаешь даря мне любовь и тепло", quote: "", date: "" },
+  { text: "Потому что ты веришь в меня\nКогда я сомневаюсь в себе, ты веришь за двоих\nИ у меня всё получается", quote: "", date: "" },
+  { text: "Потому что ты радуешься моим успехам больше, чем я сам\nЛюбая моя маленькая победа для тебя праздник\nИ от этого хочется стараться ещё сильнее", quote: "", date: "" },
+  { text: "Потому что ты всегда меня выслушаешь\nТы никогда не говоришь, что тебе неинтересно\nИ мне хочется рассказывать тебе всё", quote: "", date: "" },
+  { text: "Потому что рядом с тобой я становлюсь целее\nТы даже не замечаешь, сколько всего во мне поправила\nПросто тем, что была рядом", quote: "", date: "" },
+  { text: "Потому что с тобой мне ничего не страшно\nЛюбые трудности становятся легче\nКогда я знаю, что ты со мной", quote: "", date: "" },
+  { text: "Потому что ты делаешь меня сильнее\nТы всегда говоришь, что я справлюсь\nИ я правда справляюсь, потому что ты в меня веришь", quote: "", date: "" },
+  { text: "Потому что ты называешь меня котиком, песиком, милым, любимым, дорогим\nИ в каждом слове столько любви\nЧто я таю каждый раз", quote: "", date: "" },
+  { text: "Потому что ты моя самая прекрасная и добрая хозяйка\nА я твой песик\nИ лучше места, чем рядом с тобой, для меня нет, ведь пес лучший друг человека", quote: "", date: "" },
+  { text: "Потому что ты не даёшь мне опускать руки\nКогда я хочу всё бросить, ты напоминаешь, зачем я стараюсь", quote: "", date: "" },
+  { text: "Потому что ты прощаешь мне мои глупости\nИ любишь меня, даже когда я туплю\nОсобенно когда я туплю", quote: "", date: "" },
+  { text: "Потому что ты говоришь мне «спасибо что ты у меня есть»\nА я думаю то же самое про тебя\nКаждый день", quote: "", date: "" },
+  { text: "Потому что ты сказала мне «спасибо что родился»\nИ с того момента мой день рождения значит для меня больше", quote: "", date: "" },
+  { text: "Потому что расстояние нас не останавливает\nМежду нами города, часы разницы и граница\nА ты всё равно ближе всех", quote: "", date: "" },
+  { text: "Потому что Калининград стал для меня самым важным городом на карте\nЯ смотрю на карту и сразу ищу его глазами\nПотому что там ты", quote: "", date: "" },
+  { text: "Потому что я хочу гулять с тобой у моря\nДержать тебя за руку, молчать, слушать волны\nИ знать, что никуда не нужно спешить", quote: "", date: "" },
+  { text: "Потому что я хочу просыпаться и видеть тебя рядом\nНе на экране, а по-настоящему", quote: "", date: "" },
+  { text: "Потому что я хочу обнять тебя по-настоящему\nТак крепко, чтобы ты почувствовала всё, что я не успел написать", quote: "", date: "" },
+  { text: "Потому что я хочу услышать твой смех вживую\nБез динамиков и задержки\nПросто рядом", quote: "", date: "" },
+  { text: "Потому что я жду нашей встречи\nЯ уже знаю, что буду самым счастливым ретривером рядом со своей любимой хозяйкой\nИ дело не в том, что я собака, а в том, что я правда тебя люблю", quote: "", date: "" },
+  { text: "Потому что с тобой я думаю о будущем\nРаньше я не загадывал наперёд\nА теперь у меня есть планы, и в каждом из них есть ты", quote: "", date: "" },
+  { text: "Потому что у нас есть общая мечта\nТёплый вечер, звёздное небо, и мы просто поём что-то вдвоём\nЯ научусь играть, обещаю", quote: "", date: "" },
+  { text: "Потому что благодаря тебе я ближе к своей мечте\nТы сама не представляешь, сколько для этого сделала", quote: "", date: "" },
+  { text: "Потому что я хочу сделать тебя счастливой\nИ стараюсь каждый день\nНе потому что надо, а потому что мне хочется видеть твою улыбку", quote: "", date: "" },
+  { text: "Потому что я хочу хвалить тебя каждый раз, когда ты рядом\nИскренне, а не потому что так положено\nТы этого заслуживаешь", quote: "", date: "" },
+  { text: "Потому что ты рисуешь со школы\nЯ помню историю про старшеклассницу, которая написала тебе красной ручкой, что ты должна продолжать\nСпасибо ей, потому что ты продолжила и стала той, кто ты есть", quote: "", date: "" },
+  { text: "Потому что без тебя всё не то\nЯ пробовал представить свой день без тебя\nИ не смог", quote: "", date: "" },
+  { text: "Потому что я не хочу никуда без тебя\nНи в игру, ни на праздник, ни дальше по жизни", quote: "", date: "" },
+  { text: "Потому что каждый раз, когда ты появляешься в сети, становится светлее\nКак будто солнце выглянуло", quote: "", date: "" },
+  { text: "Потому что ты стала для меня воздухом\nТы уже часть меня\nИ я не хочу это терять", quote: "", date: "" },
+  { text: "Потому что ты понимаешь меня с полуслова\nИногда мне даже не нужно ничего объяснять\nТы просто чувствуешь", quote: "", date: "" },
+  { text: "Потому что однажды всё изменилось\nЯ просто подарил незнакомой девушке маленький подарок в виде Мюс Деша\nА получил тебя, больше чем подарок, а скорее даже судьба", quote: "", date: "" },
+  { text: "Потому что ты не боишься показывать своё творчество людям\nЯ каждый раз тобой горжусь", quote: "", date: "" },
+  { text: "Потому что ты моя госпожа, а я твой рабик\nИ мне нравится быть твоим", quote: "", date: "" },
+  { text: "Потому что ты знаешь меня лучше всех\nИногда даже лучше, чем я сам", quote: "", date: "" },
+  { text: "Потому что с тобой можно говорить обо всём\nХоть о глупостях, хоть о самом важном\nИ ты везде рядом", quote: "", date: "" },
+  { text: "Потому что ты любишь меня всего\nСо всеми странностями и тараканами\nА я люблю тебя всю", quote: "", date: "" },
+  { text: "Потому что ты прекрасно поёшь ангельским голосом\nИ мне очень хочется, каждый раз слушать тебя чуть подольше\nВедь твой голос для меня как колыбельная", quote: "", date: "" },
+  { text: "Потому что ты когда-то была крутышкой в танцах\nИ я до сих пор не понимаю, как в одном человеке помещается столько талантов", quote: "", date: "" },
+  { text: "Потому что ты моя причина улыбаться\nДаже когда день тяжёлый, я вспоминаю тебя\nИ улыбаюсь", quote: "", date: "" },
+  { text: "Потому что ты выбрала меня\nИз всех людей ты выбрала именно меня\nИ я каждый день стараюсь быть достойным этого", quote: "", date: "" },
+  { text: "Потому что ты радуешься, когда видишь, как я рисую, создаю что-то новое, делюсь новостями\nТы меня подбадриваешь, а потом смотришь, как у меня появляются силы\nИ я работаю ещё больше, чтобы снова увидеть, как ты радуешься", quote: "", date: "" },
+  { text: "Потому что ты делаешь для меня многое, даже больше, чем моя семья\nИз-за чего я отношусь к тебе как к своей любимой сестре", quote: "", date: "" },
+  { text: "Потому что у тебя горят глаза, когда ты чем-то увлечена\nИ мне нравится быть частью твоих идей, даже самых безумных", quote: "", date: "" },
+  { text: "Потому что с тобой я стал собой\nТем, кем всегда хотел быть, но боялся", quote: "", date: "" },
+  { text: "Потому что одну причину я не умею написать словами\nЯ скажу её тебе лично\nКогда буду смотреть в твои глаза", quote: "", date: "" },
+  { text: "Потому что ты это ты\nИ я люблю тебя очень очень сина\nСегодня, завтра и всегда <333", quote: "", date: "" },
 ];
-/* ============================================= */
 
-const TOTAL = 100;
-while (REASONS.length < TOTAL)
-  REASONS.push({ text: "Эта причина скоро появится 🌹", quote: "", date: "" });
+// конверты "Открой, когда…"
+const LETTERS = [
+  { when: "скучаешь",
+    art: `                 ♡
+         (\\_(\\      /)_/)
+         (    )    (    )
+        ૮/ʚɞ |ა    ૮|  ʚɞ\\ა
+        ( ◌  |     |  ◌ )`,
+    text: `Я тоже
+Прямо сейчас, скорее всего
+
+2 335 км это просто цифра
+Неприятная, но цифра
+И я каждый день думаю, как её уменьшить
+
+Напиши мне одно слово «скучаю»
+Больше ничего не надо, я пойму <3` },
+
+  { when: "не спится",
+    art: `   ⋆ ˚｡⋆       ☾       ⋆ ˚｡⋆
+( ˘ω˘ )ᶻᶻ    ♡    ( ˘ω˘ )ᶻᶻ`,
+    text: `У меня сейчас на три часа позже, так что, если ты не спишь, есть шанс, что и я тоже
+
+Попробуй вместо овец считать, сколько раз я сегодня о тебе подумал
+Собьёшься раньше, чем уснёшь, но это и есть план
+
+Приятненьких и самых комфортненьких снов, мам
+Я рядом, просто далеко~~~` },
+
+  { when: "грустно",
+    art: `(っ˘ω˘ς )  ⊂(´･ω･｀⊂)`,
+    text: `Иди сюда
+
+Не обязательно рассказывать, что случилось
+Можно просто написать «мне плохо», и я буду рядом столько, сколько надо
+
+Если совсем никак, разрешаю принять одну шутку из твоего же сборника
+Но не больше трёх в день, ты сама так прописала` },
+
+  { when: "злишься на меня",
+    art: `‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎boop
+         へ      ╱|
+      ૮  - ՛) つ(>  < 7
+      / ⁻  ៸     、˜〵
+  乀 (ˍ,  ل       じしˍ,)ノ`,
+    text: `Ладно
+Скорее всего, я заслужил
+
+Но прежде чем меня казнить, Великая, вспомни, что я твой самый преданный рабик и без меня некому будет носить тебе шоколадки
+
+boop
+
+Всё, мир? Если нет, напиши, в чём я неправ
+Я правда послушаю, окак?`, boop: true },
+
+  { when: "устала",
+    art: `   /\\_/\\      (\\  /)       A   A
+  ( ˶•o•˶)    ( •ω• )     ( •⤙•  )
+ ଘ(ა🍱)       (ა🍙૮)｡     (🍜٩  )੭`,
+    text: `Сначала поешь
+Нормально поешь, а не чай с печенькой
+
+Потом под одеяло
+Всё остальное подождёт, а я подожду тем более
+
+Ты не обязана всё успевать
+Ты обязана отдыхать
+Это приказ рабика, такое бывает раз в жизни` },
+
+  { when: "хочется сладкого",
+    art: `/)/)  (\\(\\
+(. .) (. .)
+( づ🍫 ⊂ )`,
+    text: `Это я протягиваю тебе шоколадку
+Пока только так
+
+Запиши: за мной долг
+Отдам лично, с процентами <333` },
+
+  { when: "тебя кто-то обидел",
+    art: `⠀⠀⠀ (\\__/)⠀⠀⠀⠀⠀
+⠀⠀⠀ (•ㅅ•)⠀⠀Yes, I'm her
+⠀＿ ノヽ⠀ノ＼＿⠀ Bodyguard.
+/⠀️⠀Y⠀⌒Ｙ⌒⠀Ｙ⠀️ヽ
+(⠀️⠀️⠀️(三ヽ人⠀⠀/⠀ ⠀|
+|⠀️⠀️⠀️ﾉ⠀¯¯\\⠀￣￣ヽ ノ
+ヽ＿＿＿⠀⠀＞､＿_／
+⠀⠀⠀｜(⠀王⠀)〈⠀(\\__/)
+⠀⠀⠀/⠀ﾐ\`——彡⠀\\ (•ㅅ•) GF`,
+    text: `Имя, адрес, время
+
+Шучу
+Наполовину
+
+Кто бы это ни был, он неправ
+А ты не одна
+Расскажи мне, я на твоей стороне ещё до того, как узнаю подробности` },
+
+  { when: "сомневаешься в себе",
+    art: `ʕ •ᴥ•ʔノ  ♡  ヽ(•‿• ｡)`,
+    text: `Ты умнее, смешнее и красивее, чем сама о себе думаешь
+
+Это не комплимент
+Это факт, проверенный мной лично и многократно
+
+И вообще, Великие не сомневаются
+Они просто иногда устают` },
+
+  { when: "считаешь дни до встречи",
+    art: `( ˘ ³˘)♡ · · · · · · · ♡(˘ε˘ )
+Атырау               Калининград`,
+    text: `Я тоже считаю
+
+Каждый прошедший день не потерян
+Это минус один до того, как я просто приеду и всё это станет не нужно
+
+Держись, бейба
+Я уже ближе, чем вчера` },
+
+  { when: "просто так",
+    art: `(〃´∀\`)人(´∀\`〃)`,
+    text: `Просто так тоже можно
+
+Люблю тебя мам, очень очень сина
+Без повода, без инструкции и без побочных эффектов
+Ну, почти <333` },
+
+  { when: "хочется, чтобы я прочитал тебе стих",
+    art: `(っ˘ω˘ς ) ♡ ( ˘ ³˘)`,
+    text: `Это я написал для тебя сам
+
+Два случайных человека
+Повстречались на пути,
+И с того простого мига
+Стало не свернуть, не уйти
+
+Люди любят,
+Значит, тянутся друг к другу,
+Значит, хочется быть рядом,
+Согревая друг друга взглядом
+
+Ты сказала, это совпадение,
+А я отвечу, что нет
+Нам так не хватало тепла порой,
+Пока не зажгли этот свет
+
+Люди любят,
+Обрастая теплотой,
+Разговорами по ночам,
+Тишиной и добротой
+
+Делали это тихо, не спеша,
+Никуда не торопясь,
+Просто рядом стало легче,
+Просто вот такая связь
+
+Тело к телу, сердце к сердцу,
+Дышим тихо, в унисон,
+Значит, это и есть любовь,
+Значит, это не сон` },
+
+  { when: "открыла все 101 розу", lock: true,
+    art: `(づ ◕‿◕ )づ ♡ ⊂(◕‿◕ ⊂)`,
+    text: `Ты правда открыла все сто
+Я знал, что дойдёшь, ты же у меня упрямая
+
+Причин на самом деле больше
+Просто в сад они уже не влезли
+
+Остальные расскажу лично` },
+];
+// досье: факты о ней
+const FACTS = [{"s": "Рацион", "i": [{"t": "Якисоба", "x": "Твоё самое любимое японское блюдо\nТы готовишь её сама, а мама потом всё утаскивает"}, {"t": "Онигири", "x": "Ты обещала сделать мне онигири с мордашкой мишки\nЯ запомнил, долг записан"}, {"t": "Чизкейк", "x": "Твой любимый десерт, «очень очень вкусна», цитирую дословно"}, {"t": "Клубника", "x": "Всё, что с клубникой, для тебя вкусно\nА если я буду пахнуть клубникой, ты будешь любить меня ещё больше, сама сказала"}, {"t": "Виноградное", "x": "Если будет твоё любимое виноградное, тебя можно уговорить почти на что угодно"}, {"t": "Красная рыба", "x": "Ты её обожаешь, и мама делает тебе с ней бутерброды на завтрак, потому что знает"}, {"t": "Чаёк и какао", "x": "Ты любишь попить чаёк, а из всего остального всегда выбираешь какао, лучше с зефирками"}, {"t": "Всё и сразу", "x": "«Я люблю есть всё сразу»\nНикакой очерёдности, только хаос"}]}, {"s": "Повадки", "i": [{"t": "«Хмпх,,,,,,»", "x": "Значит, ты дуешься, но не всерьёз\nЧем больше запятых, тем сильнее надо тебя потискать"}, {"t": "«Хехе»", "x": "Значит, ты что-то задумала\nИ мне уже страшно и интересно одновременно"}, {"t": "Последнее слово", "x": "«Я люблю, когда последнее слово именно за мной»\nПоэтому в этом досье последнее слово тоже оставлю тебе, внизу"}, {"t": "Скандалы", "x": "Ты сама призналась, что любишь поскандалить\nНо скандалишь ты так мило, что я иногда специально подставляюсь"}, {"t": "Кусь", "x": "Ты кусаешься\nПредупреждаешь честно: «я тебя укушу», и правда кусаешь"}, {"t": "Ревность", "x": "Ревнуешь открыто и громко, капсом: «Я РЕВНУЮ АЛЕ»\nИ сразу готова идти с кем-то драться"}, {"t": "«Ты мой»", "x": "Ты говоришь это так часто и так уверенно, что спорить бессмысленно\nДа и не хочется"}, {"t": "Видосы про нас", "x": "Каждый день ты находишь в интернете видео и пишешь «это мы»\nУ тебя уже целая коллекция нас из других людей"}, {"t": "Наш лор", "x": "Ты придумываешь нам истории: то мы друзья детства, то уже где-то вместе живём\nИ всё это звучит так, будто уже было"}, {"t": "Пледики", "x": "Ты всех укутываешь: пледик, пушистое одеяло, тёплые шарфики\nИ обещала обмотать моё сердечко шарфиками и поставить рядом какао"}, {"t": "Сова", "x": "Ты сова-интроверт, у тебя «энергия только перед сном появляется»\nПоэтому самое интересное у нас всегда ночью"}, {"t": "Коллекции", "x": "Ты собираешь кроликов и показываешь их мне первому, «а то некому показывать»"}]}, {"s": "Особые приметы", "i": [{"t": "Глаза", "x": "Зелёные, самые красивые\nОтсюда и кличка в этом деле"}, {"t": "Смех", "x": "Капсом, на полэкрана: «ААХАХАХАХАХАХ»\nУзнаю из тысячи"}, {"t": "«Умничка»", "x": "Твоё любимое слово для меня\nИ «хороший мальчик~», когда ты в настроении командовать"}, {"t": "«~~~» и «<3333»", "x": "Когда видишь это, значит, ты сейчас нежная\nЛови момент"}]}, {"s": "Слабые места", "i": [{"t": "Красные розы", "x": "Ненавидишь\nПоэтому в моём саду ни одной красной розы нет, я проверил"}, {"t": "Шум", "x": "Не выносишь, тебе нужна тишина и тёмное маленькое уютное место"}, {"t": "Обман", "x": "Ты слишком честная и слишком любишь правду\nПоэтому врать тебе нельзя никогда, и я не буду"}, {"t": "Тюфяки", "x": "Терпеть не можешь, когда я веду себя как тюфяк\nПринято, работаю над собой"}, {"t": "Чужой дом", "x": "Не любишь есть в гостях\nЗначит, будешь есть у меня, это почти твой дом"}, {"t": "Обнимашки", "x": "«Просто хочу обнимашки,,,,,,,»\nТвоё самое слабое место, и я этим нагло пользуюсь"}, {"t": "Когда о тебе волнуются", "x": "Ты это любишь\nОтлично, потому что я волнуюсь о тебе всегда"}]}, {"s": "Тайные желания", "i": [{"t": "Аэропорт", "x": "Ты хочешь запрыгнуть на меня прямо в аэропорту\nЯ поймаю, обещаю, тренирую руки"}, {"t": "Пигирайд", "x": "«ПИГИРАЙД ТОЛЬКО МОЙ»\nА ещё донести тебя на руках, желательно до другой страны"}, {"t": "Пикник", "x": "Постелить пледик и устроить пикник"}, {"t": "Цветочки и чай", "x": "Ты хочешь цветочки и пить чаёк под цветущим деревом"}, {"t": "Ночной Калининград", "x": "Чтобы нас катали по ночному городу\nТы на каблучках и в чёрном платье, а я твой дворецкий"}, {"t": "Похвастаться", "x": "Ты хочешь всем хвастаться своим песиком\nПесик это я, и я не против"}, {"t": "В обнимку", "x": "Укутать меня в пледик и ходить со мной в обнимку\nДа, пожалуйста"}]}, {"s": "Таланты", "i": [{"t": "Танцы", "x": "Ты любишь танцевать, а когда-то даже была хореографом"}, {"t": "Песни", "x": "Ты поёшь\nИ однажды сказала, что спела бы мне одну песню, я всё ещё жду"}, {"t": "Рисование", "x": "Ты рисуешь со школы, ещё тогда тебе написали, что ты должна продолжать\nТы продолжила, и теперь твоё творчество видят люди"}, {"t": "Большие мечты", "x": "У тебя их много\nИ почти в каждой ты уже придумала место для меня"}]}, {"s": "Как приручить (инструкция для себя)", "i": [{"t": "Пункт первый", "x": "Никогда не врать"}, {"t": "Пункт второй", "x": "Не быть тюфяком"}, {"t": "Пункт третий", "x": "На «хмпх» отвечать вниманием, а не оправданиями\nТы сама сказала: «если обижаюсь, то просто потому что хочу с тобой поиграть»"}, {"t": "Пункт четвёртый", "x": "Чаёк или какао, что-нибудь с клубникой и обнимашки\nРаботает всегда"}, {"t": "Пункт пятый", "x": "Волноваться о ней\nОна это любит, а мне и стараться не надо"}, {"t": "Пункт шестой", "x": "Оставлять за ней последнее слово\nНу, почти всегда"}]}];
+// =====================
+
+const TOTAL = 101;
+while (REASONS.length < TOTAL) REASONS.push({ text: "Допишу позже", quote: "", date: "" });
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
-let opened = new Set(), current = 0;
-try { opened = new Set(JSON.parse(localStorage.getItem("roses-opened") || "[]")); } catch(e) {}
-const save = () => { try { localStorage.setItem("roses-opened", JSON.stringify([...opened])); } catch(e) {} };
-$("letter").textContent = "";
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
+const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 
-/* ---------- звёздное небо ---------- */
+let opened = new Set(load("roses-opened", []));
+let read = new Set(load("otkroy-read", []));
+let sent = load("hearts-sent", 0);
+let current = 0;
+
+// пасхалки
+const EGGS_TOTAL = 7;
+let eggs = new Set(load("eggs-found", []));
+function updateEggs() {
+  $("eggs").innerHTML = eggs.size
+    ? `на сайте спрятано ${EGGS_TOTAL} пасхалок · найдено <b>${eggs.size}</b>`
+    : `на сайте спрятано ${EGGS_TOTAL} пасхалок, ищи`;
+}
+function egg(id, msg) {
+  const isNew = !eggs.has(id);
+  if (isNew) { eggs.add(id); store("eggs-found", [...eggs]); updateEggs(); }
+  setTimeout(() => toast(msg + (isNew ? ` · пасхалка ${eggs.size} из ${EGGS_TOTAL}` : "")), 50);
+}
+function tapCounter(el, need, fn) {
+  let n = 0, timer;
+  el.addEventListener("click", () => {
+    n++; clearTimeout(timer); timer = setTimeout(() => n = 0, 1500);
+    if (n >= need) { n = 0; fn(); }
+  });
+}
+let ACC = "#ff6b86";
+
+// звёзды
 for (let i = 0; i < 150; i++) {
-  const s = document.createElement("span");
-  const z = Math.random() * 2 + 0.5;
+  const s = document.createElement("span"), z = Math.random() * 2 + .5;
   s.className = "star";
   s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${z}px;height:${z}px;` +
-                    `animation-duration:${2 + Math.random()*4}s;animation-delay:${-Math.random()*5}s`;
+                    `animation-duration:${2+Math.random()*4}s;animation-delay:${-Math.random()*5}s`;
   $("sky").append(s);
 }
-function shootingStar() {
+(function shootingStar() {
   const s = document.createElement("span");
   s.className = "shoot";
   s.style.left = 30 + Math.random() * 70 + "%";
@@ -201,10 +673,9 @@ function shootingStar() {
   $("sky").append(s);
   setTimeout(() => s.remove(), 1400);
   setTimeout(shootingStar, 4000 + Math.random() * 7000);
-}
-setTimeout(shootingStar, 2500);
+})();
 
-/* ---------- расстояние, время, дни ---------- */
+// расстояние и время
 function plural(n, [one, few, many]) {
   n = Math.abs(n) % 100; const d = n % 10;
   if (n > 10 && n < 20) return many;
@@ -228,42 +699,74 @@ const timeIn = tz => new Date().toLocaleTimeString("ru-RU", { timeZone: tz, hour
 function updateInfo() {
   const diff = Math.abs(tzOffset(MY_TZ) - tzOffset(HER_TZ));
   const lines = [
-    "для " + HER_NAME,
     `${MY_CITY} ♥ ${HER_CITY} · ${KM.toLocaleString("ru-RU")} км` +
       (diff ? ` · ${diff} ${plural(diff, ["час", "часа", "часов"])} разницы` : ""),
     `у меня ${timeIn(MY_TZ)} · у тебя ${timeIn(HER_TZ)}`,
   ];
-  if (START_DATE) {
-    const days = Math.floor((Date.now() - new Date(START_DATE)) / 864e5);
-    if (days > 0) lines.push(`вместе уже ${days.toLocaleString("ru-RU")} ${plural(days, ["день", "дня", "дней"])}`);
+  const herHour = +new Date().toLocaleString("en-US", { timeZone: HER_TZ, hour: "numeric", hourCycle: "h23" });
+  if (herHour >= 0 && herHour < 5) {
+    lines.push("у тебя ночь, вообще-то, иди спать");
+    if (!eggs.has("night")) egg("night", "Ночная пасхалка: застукал тебя не спящей");
   }
   $("sub").innerHTML = lines.map(esc).join("<br>");
 }
 updateInfo(); setInterval(updateInfo, 15000);
+function updateHint() {
+  $("ghint").textContent = sent ? `на планету можно нажимать · отправлено ${sent.toLocaleString("ru-RU")} ♥`
+                                : "на планету можно нажимать";
+}
+updateHint();
 
-/* ---------- планета ---------- */
-let globeOn = true, S = 0;
+// глобус
+let globeOn = true, S = 0, startGlobe = () => {};
 const cv = $("globe"), ctx = cv.getContext("2d"), dpr = window.devicePixelRatio || 1;
+const flying = [], ripples = [];
 function sizeGlobe() {
-  S = Math.min(360, innerWidth * 0.8, innerHeight * 0.42);
+  S = Math.min(340, innerWidth * 0.8, innerHeight * 0.4);
   cv.style.width = cv.style.height = S + "px";
   cv.width = cv.height = Math.round(S * dpr);
 }
 sizeGlobe();
 
+function sendHearts(n, back = false) {
+  const now = performance.now();
+  for (let i = 0; i < n; i++)
+    flying.push({ t0: now + i * 160, dur: 1700 + Math.random() * 500, back,
+                  wob: (Math.random() - .5) * 0.6, size: 13 + Math.random() * 8 });
+  if (back) return;
+  const before = sent;
+  sent += n; store("hearts-sent", sent); updateHint();
+  if (navigator.vibrate) navigator.vibrate(15);
+  if (Math.floor(before / 99) < Math.floor(sent / 99)) {
+    setTimeout(() => sendHearts(12, true), 1800);
+    egg("hearts", "Я получил все сердечки, лови ответные");
+  }
+}
+cv.addEventListener("click", () => sendHearts(3));
+
 (async function initGlobe() {
-  if (!window.d3) { cv.style.display = "none"; return; }
+  if (!window.d3) { cv.style.display = "none"; $("ghint").style.display = "none"; return; }
   let land = null;
   try {
-    const w = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json").then(r => r.json());
+    const w = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/land-110m.json").then(r => r.json());
     land = topojson.feature(w, w.objects.land);
-  } catch(e) {}
+  } catch (e) {}
   const proj = d3.geoOrthographic().clipAngle(90);
   const path = d3.geoPath(proj, ctx);
   const grat = d3.geoGraticule10();
   const interp = d3.geoInterpolate(MY_COORDS, HER_COORDS);
   const arc = { type: "LineString", coordinates: d3.range(0, 1.0001, 0.02).map(interp) };
   const mid = interp(0.5);
+  const ease = p => p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+
+  function heart(x, y, size, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = ACC; ctx.shadowColor = ACC; ctx.shadowBlur = 12 * dpr;
+    ctx.font = `${size * dpr}px serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText("♥", x, y);
+    ctx.restore();
+  }
 
   function frame(t) {
     if (!globeOn) return;
@@ -271,35 +774,30 @@ sizeGlobe();
     proj.scale(c * 0.86).translate([c, c]).rotate([-mid[0] + Math.sin(t / 6000) * 18, -mid[1] + 10, 0]);
     ctx.clearRect(0, 0, s, s);
 
-    // свечение атмосферы
     let g = ctx.createRadialGradient(c, c, c * 0.8, c, c, c);
     g.addColorStop(0, "rgba(255,107,134,0.35)"); g.addColorStop(1, "rgba(255,107,134,0)");
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(c, c, c, 0, Math.PI * 2); ctx.fill();
 
-    // сфера
     g = ctx.createRadialGradient(c * 0.75, c * 0.65, c * 0.1, c, c, c * 0.9);
     g.addColorStop(0, "#3d1d42"); g.addColorStop(1, "#120814");
     ctx.fillStyle = g; ctx.beginPath(); path({ type: "Sphere" }); ctx.fill();
 
-    // сетка
     ctx.strokeStyle = "rgba(255,255,255,0.07)"; ctx.lineWidth = 0.6 * dpr;
     ctx.beginPath(); path(grat); ctx.stroke();
 
-    // материки
     if (land) {
       ctx.fillStyle = "rgba(255,170,190,0.16)"; ctx.strokeStyle = "rgba(255,150,175,0.4)";
       ctx.beginPath(); path(land); ctx.fill(); ctx.stroke();
     }
 
-    // светящаяся дуга между нами
     ctx.save();
-    ctx.strokeStyle = "#ff6b86"; ctx.lineWidth = 2 * dpr;
-    ctx.shadowColor = "#ff6b86"; ctx.shadowBlur = 10 * dpr;
-    ctx.setLineDash([6 * dpr, 6 * dpr]); ctx.lineDashOffset = -t / 40;
+    ctx.strokeStyle = ACC; ctx.lineWidth = 2 * dpr;
+    ctx.shadowColor = ACC; ctx.shadowBlur = 10 * dpr;
+    ctx.setLineDash([6 * dpr, 6 * dpr]); ctx.lineDashOffset = t / 40;
     ctx.beginPath(); path(arc); ctx.stroke();
     ctx.restore();
 
-    // города
+    const [mx, my] = proj(MY_COORDS), [kx, ky] = proj(HER_COORDS);
     const cities = [[MY_COORDS, MY_CITY, "left", 1], [HER_COORDS, HER_CITY, "right", -1]];
     for (const [co, name, align, side] of cities) {
       const [x, y] = proj(co);
@@ -311,31 +809,50 @@ sizeGlobe();
       ctx.textAlign = align; ctx.fillText(name, x + side * 10 * dpr, y + 16 * dpr);
     }
 
-    // сердечко летит по дуге
-    const p = (Math.sin(t / 2200) + 1) / 2;
-    const [hx, hy] = proj(interp(p));
-    ctx.save();
-    ctx.fillStyle = "#ff6b86"; ctx.shadowColor = "#ff6b86"; ctx.shadowBlur = 12 * dpr;
-    ctx.font = `${16 * dpr}px serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillText("♥", hx, hy);
-    ctx.restore();
+    // сердечко по дуге из Калининграда ко мне
+    const p0 = (t / 4200) % 1;
+    const [hx, hy] = proj(interp(1 - ease(p0)));
+    heart(hx, hy, 15, p0 > .92 ? (1 - p0) / .08 : 1);
+
+    // сердечки по нажатию
+    for (let i = flying.length - 1; i >= 0; i--) {
+      const h = flying[i];
+      const p = (t - h.t0) / h.dur;
+      if (p < 0) continue;
+      if (p >= 1) { flying.splice(i, 1); ripples.push({ t, back: h.back }); continue; }
+      const q = ease(p);
+      const [x, y] = proj(interp(h.back ? q : 1 - q));
+      const lift = Math.sin(q * Math.PI) * 26 * dpr;
+      heart(x + h.wob * lift, y - lift, h.size * (0.7 + Math.sin(q * Math.PI) * 0.5), Math.min(1, p * 6));
+    }
+
+    // вспышка у меня, когда долетело
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const r = ripples[i], p = (t - r.t) / 900;
+      if (p >= 1) { ripples.splice(i, 1); continue; }
+      const [rx, ry] = r.back ? [kx, ky] : [mx, my];
+      ctx.strokeStyle = `rgba(255,140,165,${1 - p})`; ctx.lineWidth = 2 * dpr;
+      ctx.beginPath(); ctx.arc(rx, ry, (6 + p * 30) * dpr, 0, Math.PI * 2); ctx.stroke();
+      heart(rx, ry - (p * 22) * dpr, 12, 1 - p);
+    }
 
     requestAnimationFrame(frame);
   }
-  requestAnimationFrame(frame);
+  startGlobe = () => requestAnimationFrame(frame);
+  startGlobe();
 })();
 
-/* ---------- одна роза ---------- */
+// роза
 function roseSVG() {
   const layers = [[5,48,0],[5,38,36],[5,28,12],[4,19,50],[3,11,20]];
   let p = "";
   for (const [n, r, off] of layers)
     for (let k = 0; k < n; k++)
       p += `<path d="M0,0 C${-r*.95},${-r*.25} ${-r*.75},${-r} 0,${-r} C${r*.75},${-r} ${r*.95},${-r*.25} 0,0Z" transform="rotate(${off + k*360/n})"/>`;
-  return `<svg viewBox="-50 -50 100 100"><g fill="url(#pg)" stroke="#3d0410" stroke-width="1" stroke-opacity=".6">${p}</g><circle r="4" fill="#3d0410"/></svg>`;
+  return `<svg viewBox="-50 -50 100 100"><g fill="url(#pg)" stroke="#24103d" stroke-width="1" stroke-opacity=".6">${p}</g><circle r="4" fill="#24103d"/></svg>`;
 }
 
-/* ---------- букет сердцем ---------- */
+// букет сердцем
 const inHeart = (x, y) => Math.pow(x*x + y*y - 1, 3) - x*x*y*y*y;
 function points(s) {
   const pts = []; let row = 0;
@@ -373,19 +890,19 @@ pts.forEach((p, k) => {
 });
 
 function resize() {
-  const s = Math.min(innerWidth * 0.94, innerHeight - 170, 760);
+  const s = Math.min(innerWidth * 0.94, innerHeight - 190, 760);
   $("bouquet").style.setProperty("--size", s + "px");
   sizeGlobe();
 }
 addEventListener("resize", resize); resize();
 
 function updateCounter() {
-  $("counter").innerHTML = `Распустилось <b>${opened.size}</b> из ${TOTAL}`;
+  $("counter").innerHTML = `<b>${opened.size}</b> из ${TOTAL}`;
   $("letterBtn").classList.toggle("hidden", opened.size < TOTAL);
 }
 updateCounter();
 
-/* ---------- эффекты ---------- */
+// эффекты
 let typer = null, finishTyping = null;
 function typeText(el, text, speed, done) {
   clearInterval(typer);
@@ -432,49 +949,55 @@ function toast(msg) {
   $("toast").textContent = msg;
   $("toast").classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => $("toast").classList.remove("show"), 4000);
+  toastTimer = setTimeout(() => $("toast").classList.remove("show"), 3500);
 }
 
-/* ---------- музыка ---------- */
-let audio = null;
-if (MUSIC) { audio = new Audio(MUSIC); audio.loop = true; }
-$("musicBtn").onclick = () => {
-  if (!audio) return;
-  if (audio.paused) { audio.play().catch(() => {}); $("musicBtn").classList.remove("off"); }
-  else { audio.pause(); $("musicBtn").classList.add("off"); }
-};
+// фоновая музыка
+// СЮДА ССЫЛКУ НА МУЗЫКУ: имя файла рядом с index.html (например "music.mp3") или прямая ссылка на mp3
+const MUSIC_SRC = "music.mp3";
+const audio = new Audio(MUSIC_SRC);
+audio.loop = true; audio.volume = 0.45; audio.preload = "auto";
+let wantMusic = true, started = false;
+audio.addEventListener("playing", () => { started = true; });
+const musicOn = () => { wantMusic = true; $("musicBtn").classList.remove("off"); audio.play().catch(() => {}); };
+const musicOff = () => { wantMusic = false; $("musicBtn").classList.add("off"); audio.pause(); };
+audio.play().catch(() => {});
+// браузеры не дают включить звук без нажатия, поэтому музыка стартует с первого касания
+document.addEventListener("pointerdown", e => {
+  if (wantMusic && !started && !e.target.closest("#musicBtn")) musicOn();
+}, { capture: true });
+$("musicBtn").onclick = () => (wantMusic && started) ? musicOff() : musicOn();
 
-/* ---------- открыть розу ---------- */
+// открыть розу
 function openRose(k) {
   const el = $("bouquet").children[k];
   const wasNew = !opened.has(k);
   current = k;
-  opened.add(k); save(); updateCounter();
+  opened.add(k); store("roses-opened", [...opened]); updateCounter();
   el.classList.add("open");
   if (wasNew) {
     sparkle(el);
     if (navigator.vibrate) navigator.vibrate(25);
     for (let i = 0; i < 6; i++) setTimeout(petal, i * 120);
-    if (MILESTONES[opened.size]) setTimeout(() => toast(MILESTONES[opened.size]), 2200);
+    if (opened.size === TOTAL) setTimeout(() => toast("В «Открой, когда…» открылся новый конверт"), 2200);
   }
   const r = REASONS[k];
-  $("num").textContent = "РОЗА № " + (k + 1);
+  $("num").textContent = "№ " + (k + 1);
   $("reason").textContent = "";
   $("quote").textContent = r.quote ? "«" + r.quote + "»" : "";
   $("quote").style.display = r.quote ? "block" : "none";
-  $("date").textContent = r.date || "";
+  $("date").textContent = "";
   $("quote").classList.remove("in"); $("date").classList.remove("in");
-  $("nextBtn").textContent = opened.size < TOTAL ? "Следующая роза →" : "Все розы распустились ♥";
+  $("nextBtn").textContent = opened.size < TOTAL ? "Дальше" : "Письмо";
   setTimeout(() => {
     $("modal").classList.remove("hidden");
-    typeText($("reason"), r.text, 28, () => { $("quote").classList.add("in"); $("date").classList.add("in"); });
+    typeText($("reason"), r.text, 22, () => { $("quote").classList.add("in"); $("date").classList.add("in"); });
   }, wasNew ? 1000 : 50);
 }
-const modalOpen = () => !$("modal").classList.contains("hidden");
-function closeModal() { $("modal").classList.add("hidden"); }
+const closeModal = () => $("modal").classList.add("hidden");
 function nextRose() {
   closeModal();
-  if (opened.size >= TOTAL) { setTimeout(showFinal, 500); return; }
+  if (opened.size >= TOTAL) { setTimeout(() => show("final"), 500); return; }
   let n = current;
   do { n = (n + 1) % TOTAL; } while (opened.has(n));
   setTimeout(() => openRose(n), 500);
@@ -482,28 +1005,459 @@ function nextRose() {
 $("closeBtn").onclick = closeModal;
 $("nextBtn").onclick = nextRose;
 $("modal").onclick = e => { if (e.target.id === "modal") closeModal(); };
+
+// конверты
+function renderEnv() {
+  $("grid").innerHTML = "";
+  LETTERS.forEach((l, i) => {
+    const locked = l.lock && opened.size < TOTAL;
+    const b = document.createElement("button");
+    b.className = "env" + (locked ? " locked" : read.has(i) ? " read" : "");
+    b.innerHTML = `<span class="seal">${locked ? "?" : "♡"}</span>` +
+                  `<span class="lbl"><small>ОТКРОЙ, КОГДА</small>${locked ? "откроется позже" : esc(l.when)}</span>`;
+    b.onclick = () => locked ? toast("Сначала открой все 101 розу") : openEnv(i, b);
+    $("grid").append(b);
+  });
+}
+function openEnv(i, btn) {
+  const l = LETTERS[i];
+  $("eWhen").textContent = "когда " + l.when;
+  $("eArt").textContent = l.art;
+  $("eTxt").textContent = l.text;
+  const old = document.querySelector(".boop"); if (old) old.remove();
+  if (l.boop) {
+    const b = document.createElement("div");
+    b.className = "art boop"; b.textContent = "(>  <) нажми";
+    b.onclick = () => { b.textContent = "boop  ♡  мир"; };
+    $("eTxt").after(b);
+  }
+  $("eModal").classList.remove("hidden");
+  read.add(i); store("otkroy-read", [...read]); btn.classList.add("read");
+}
+const closeEnv = () => $("eModal").classList.add("hidden");
+$("eClose").onclick = closeEnv;
+$("eModal").onclick = e => { if (e.target.id === "eModal") closeEnv(); };
+
 document.addEventListener("keydown", e => {
-  if (!modalOpen()) return;
-  if (e.key === "Escape") closeModal();
-  if (e.key === "Enter" || e.key === "ArrowRight") nextRose();
+  if (e.key === "Escape") { closeModal(); closeEnv(); $("hModal").classList.add("hidden"); }
+  if (!$("modal").classList.contains("hidden") && (e.key === "Enter" || e.key === "ArrowRight")) { e.preventDefault(); nextRose(); }
 });
 
-/* ---------- переходы ---------- */
-$("startBtn").onclick = () => {
-  globeOn = false;
-  $("intro").classList.add("hidden");
-  $("garden").classList.remove("hidden");
-  $("bouquet").classList.add("grow");
-  if (audio) { audio.play().catch(() => {}); $("musicBtn").classList.remove("hidden"); }
-};
-function showFinal() {
-  $("garden").classList.add("hidden");
-  $("final").classList.remove("hidden");
-  for (let i = 0; i < 80; i++) setTimeout(petal, i * 50);
-  setTimeout(() => typeText($("letter"), LETTER, 35), 800);
+// экраны
+const SCREENS = ["intro", "garden", "final", "env", "dos"];
+let dosOpen = new Set(load("dos2-open", []));
+const DOS_TOTAL = FACTS.reduce((n, s) => n + s.i.length, 0);
+function renderDos() {
+  const root = $("dgrid"); root.innerHTML = "";
+  let k = 0;
+  FACTS.forEach(sec => {
+    const h = document.createElement("div");
+    h.className = "dsec"; h.innerHTML = `${esc(sec.s)} <small>${sec.i.length}</small>`;
+    root.append(h);
+    const g = document.createElement("div"); g.className = "dgrid2"; root.append(g);
+    sec.i.forEach(f => {
+      const id = k++;
+      const d = document.createElement("div");
+      d.className = "fact" + (dosOpen.has(id) ? " open" : "");
+      d.innerHTML = `<span class="fn">№ ${String(id + 1).padStart(2, "0")}</span><div class="ft">${esc(f.t)}</div><div class="fx">${esc(f.x)}</div>`;
+      d.onclick = () => {
+        if (dosOpen.has(id)) return;
+        dosOpen.add(id); store("dos2-open", [...dosOpen]); d.classList.add("open"); updDos();
+        if (dosOpen.size === DOS_TOTAL) toast("Досье рассекречено полностью");
+      };
+      g.append(d);
+    });
+  });
+  updDos();
 }
-$("letterBtn").onclick = showFinal;
-$("backBtn").onclick = () => { $("final").classList.add("hidden"); $("garden").classList.remove("hidden"); };
+function updDos() {
+  $("dfoot").innerHTML = dosOpen.size === DOS_TOTAL
+    ? "Заключение следствия: объект опасен, обаятелен и очень любим<br>Дело не закрывается никогда<br><br>Последнее слово, как ты любишь, за тобой"
+    : `рассекречено ${dosOpen.size} из ${DOS_TOTAL}`;
+}
+let grown = false;
+function show(id) {
+  closeModal(); closeEnv();
+  SCREENS.forEach(s => $(s).classList.toggle("hidden", s !== id));
+  $("homeBtn").classList.toggle("hidden", id === "intro");
+  if (id === "intro") { if (!globeOn) { globeOn = true; startGlobe(); } }
+  else globeOn = false;
+  if (id === "garden" && !grown) {
+    grown = true; $("bouquet").classList.add("grow");
+  }
+  if (id === "env") { renderEnv(); $("env").scrollTop = 0; }
+  if (id === "dos") { renderDos(); $("dos").scrollTop = 0; }
+  if (id === "final") {
+    $("letter").textContent = "";
+    for (let i = 0; i < 80; i++) setTimeout(petal, i * 50);
+    if (LETTER) setTimeout(() => typeText($("letter"), LETTER, 35), 800);
+  }
+}
+$("toRoses").onclick = () => show("garden");
+$("toEnv").onclick = () => show("env");
+
+$("homeBtn").onclick = () => show("intro");
+$("letterBtn").onclick = () => show("final");
+$("backBtn").onclick = () => show("garden");
+$("finalToEnv").onclick = () => show("env");
+
+// пасхалка 1: 5 раз нажать на «Зеленоглазка»
+tapCounter(document.querySelector("#intro h1 em"), 5, () => {
+  const on = document.documentElement.classList.toggle("green");
+  ACC = on ? "#4fd18b" : "#ff6b86";
+  egg("green", on ? "Вот теперь цвет правильный, как твои глаза" : "Ладно, вернул розовый");
+});
+
+// пасхалка 2: 7 раз нажать на счётчик роз
+tapCounter($("counter"), 7, () => {
+  current = 0;
+  $("num").textContent = "№ 0";
+  $("quote").style.display = "none"; $("date").textContent = "";
+  $("nextBtn").textContent = "Дальше";
+  $("modal").classList.remove("hidden");
+  typeText($("reason"), "Причина ноль, с которой всё началось: ты есть", 40);
+  egg("rose0", "Нашла секретную розу");
+});
+
+// пасхалка 3: нажать на котиков вверху «Открой, когда»
+const catsArt = document.querySelector(".ehead .art"), catsOrig = catsArt.textContent;
+catsArt.addEventListener("click", () => {
+  catsArt.textContent = LETTERS.find(l => l.boop).art;
+  setTimeout(() => catsArt.textContent = catsOrig, 1800);
+  egg("boop", "boop");
+});
+
+// пасхалка 4: нажать на зайцев с шоколадкой внизу
+document.querySelector(".efoot .art").addEventListener("click", () => {
+  for (let i = 0; i < 30; i++) setTimeout(() => {
+    const c = document.createElement("span");
+    c.className = "choc"; c.textContent = "🍫";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
+    c.style.setProperty("--rot", (Math.random() * 540 - 270) + "deg");
+    c.style.animationDuration = 3 + Math.random() * 3 + "s";
+    $("petals").append(c);
+    setTimeout(() => c.remove(), 7000);
+  }, i * 70);
+  egg("choc", "Долг по шоколадкам частично погашен");
+});
+
+// пасхалка 7: мини-игра в честь Muse Dash, 3 раза нажать на строку с расстоянием
+const Game = (() => {
+  const box = $("game"), cv = $("gc"), c = cv.getContext("2d"), panel = $("gPanel");
+  const BPM = 128, BEAT = 60 / BPM, TRAVEL = 1.6, PERF = 0.07, GOOD = 0.15;
+  let W = 0, H = 0, DPR = 1, actx = null, t0 = 0, notes = [], score = 0, combo = 0, maxCombo = 0,
+      hp = 100, st = {}, running = false, assist = false, fx = [], jumpUntil = 0, raf = 0, endAt = 0;
+  const stars = Array.from({ length: 70 }, () => [Math.random(), Math.random() * .62, Math.random() * 1.6 + .4]);
+  const BUNNY = ["(\\_/)", "(•ㅅ•)"];
+  let helpAt = 0, helpLane = 1;
+
+  function size() {
+    DPR = window.devicePixelRatio || 1; W = innerWidth; H = innerHeight;
+    cv.width = W * DPR; cv.height = H * DPR; c.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  const laneY = l => l === 0 ? H * .42 : H * .68;
+  const judgeX = () => Math.max(70, W * .2);
+
+  function chart() {
+    let s = 20231223;
+    const rnd = () => (s = (s * 1103515245 + 12345) % 2147483648) / 2147483648;
+    const out = [];
+    for (let bar = 2; bar < 26; bar++) {
+      const dense = bar < 8 ? .3 : bar < 16 ? .5 : .68;
+      for (let k = 0; k < 8; k++) {
+        const on = k % 2 === 0;
+        if (rnd() < (on ? dense + .25 : dense * .55)) {
+          const t = (bar * 4 + k / 2) * BEAT, r = rnd();
+          if (bar >= 12 && on && r < .12) out.push({ t, lane: 0 }, { t, lane: 1 });
+          else out.push({ t, lane: r < .5 ? 0 : 1 });
+        }
+      }
+    }
+    return out.map(n => ({ ...n, done: false }));
+  }
+
+  // звук
+  function tone(f, t, d, type, vol) {
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t + d + .02);
+  }
+  function kick(t) {
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(40, t + .12);
+    g.gain.setValueAtTime(.6, t); g.gain.exponentialRampToValueAtTime(.001, t + .18);
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t + .2);
+  }
+  let noise = null;
+  function hat(t, v) {
+    if (!noise) {
+      noise = actx.createBuffer(1, actx.sampleRate * .05, actx.sampleRate);
+      const d = noise.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    const s = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain();
+    s.buffer = noise; f.type = "highpass"; f.frequency.value = 7000;
+    g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.001, t + .05);
+    s.connect(f).connect(g).connect(actx.destination); s.start(t);
+  }
+  function music(start) {
+    const chords = [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]]; // Am F C G
+    const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+    for (let b = 0; b < 26 * 4 + 4; b++) {
+      const t = start + b * BEAT, ch = chords[Math.floor(b / 4) % 4];
+      if (b >= 8 || b % 4 === 0) kick(t);
+      hat(t + BEAT / 2, b >= 8 ? .12 : .06);
+      tone(hz(ch[0] - 24), t, BEAT * .9, "sine", .22);
+      if (b >= 4) for (let k = 0; k < 2; k++)
+        tone(hz(ch[(b * 2 + k) % 3] + 12), t + k * BEAT / 2, BEAT * .45, "triangle", .07);
+    }
+  }
+  const now = () => actx ? actx.currentTime - t0 : 0;
+
+  function hit(lane) {
+    if (!running) return;
+    const t = now();
+    if (lane === 0) jumpUntil = t + .28;
+    let best = null;
+    for (const n of notes) {
+      if (n.done || n.lane !== lane) continue;
+      const d = Math.abs(n.t - t);
+      if (d <= GOOD && (!best || d < Math.abs(best.t - t))) best = n;
+      if (n.t - t > GOOD) break;
+    }
+    if (!best) return;
+    best.done = true;
+    const perfect = Math.abs(best.t - t) <= PERF;
+    combo++; maxCombo = Math.max(maxCombo, combo); hp = Math.min(100, hp + 1);
+    score += Math.round((perfect ? 300 : 150) * (1 + Math.min(combo, 100) / 100));
+    st[perfect ? "perfect" : "great"]++;
+    fx.push({ txt: perfect ? "PERFECT" : "GREAT", lane, t: performance.now(), col: perfect ? "#ffd166" : "#ff8fa6" });
+    tone(perfect ? 1320 : 990, actx.currentTime, .08, "square", .05);
+    if (navigator.vibrate) navigator.vibrate(8);
+  }
+
+  function loop() {
+    if (!running) return;
+    const t = now(), jx = judgeX();
+    for (const n of notes) {
+      if (n.done) continue;
+      if (t - n.t > GOOD) {
+        n.done = true;
+        if (assist) {
+          st.help++; helpAt = performance.now(); helpLane = n.lane;
+          fx.push({ txt: "ПОЙМАЛ", lane: n.lane, t: performance.now(), col: "#9fd8ff" });
+        } else {
+          combo = 0; hp -= 12; st.miss++;
+          fx.push({ txt: "MISS", lane: n.lane, t: performance.now(), col: "#8a7a85" });
+        }
+      } else break;
+    }
+    if (hp <= 0) return finish(false);
+    if (t > endAt) return finish(true);
+
+    // фон
+    const g = c.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#1d0b24"); g.addColorStop(1, "#0b0610");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    for (const [x, y, z] of stars) {
+      c.fillStyle = `rgba(255,255,255,${.2 + .5 * Math.abs(Math.sin(t * 2 + x * 9))})`;
+      c.fillRect(((x * W - t * 20 * z) % W + W) % W, y * H, z, z);
+    }
+    // земля
+    c.strokeStyle = "rgba(255,107,134,.35)"; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(0, laneY(1) + 34); c.lineTo(W, laneY(1) + 34); c.stroke();
+    c.strokeStyle = "rgba(255,107,134,.12)"; c.setLineDash([8, 10]); c.lineDashOffset = t * 200;
+    for (const l of [0, 1]) { c.beginPath(); c.moveTo(jx, laneY(l)); c.lineTo(W, laneY(l)); c.stroke(); }
+    c.setLineDash([]);
+    // кольца
+    const pulse = 1 + .08 * Math.max(0, Math.cos((t / BEAT) * Math.PI * 2));
+    for (const l of [0, 1]) {
+      c.strokeStyle = ACC; c.lineWidth = 2;
+      c.beginPath(); c.arc(jx, laneY(l), 24 * pulse, 0, Math.PI * 2); c.stroke();
+    }
+    // ноты
+    const speed = (W - jx + 40) / TRAVEL;
+    c.textAlign = "center"; c.textBaseline = "middle";
+    for (const n of notes) {
+      if (n.done) continue;
+      const x = jx + (n.t - t) * speed;
+      if (x > W + 40) break;
+      c.save(); c.shadowColor = ACC; c.shadowBlur = 14;
+      c.fillStyle = n.lane === 0 ? ACC : "#ffd3dc";
+      c.font = "34px serif"; c.fillText("♥", x, laneY(n.lane) + 2);
+      c.restore();
+    }
+    // зайчик
+    const air = t < jumpUntil, py = air ? laneY(0) : laneY(1);
+    c.fillStyle = "#fff"; c.font = "15px ui-monospace,Menlo,Consolas,monospace";
+    c.fillText(BUNNY[0], jx - 2, py - 30); c.fillText(BUNNY[1], jx - 2, py - 13);
+    // второй зайчик-помощник
+    if (assist) {
+      const hy = performance.now() - helpAt < 260 ? laneY(helpLane) : laneY(1);
+      c.fillStyle = "#9fd8ff"; c.font = "15px ui-monospace,Menlo,Consolas,monospace";
+      c.fillText(BUNNY[0], jx - 50, hy - 30); c.fillText(BUNNY[1], jx - 50, hy - 13);
+      c.fillStyle = "#b9a0aa"; c.font = "10px Manrope,sans-serif"; c.fillText("я тут", jx - 50, hy + 2);
+    }
+    // эффекты
+    const pn = performance.now();
+    fx = fx.filter(f => pn - f.t < 600);
+    for (const f of fx) {
+      const p = (pn - f.t) / 600;
+      c.globalAlpha = 1 - p; c.fillStyle = f.col; c.font = "600 16px Manrope,sans-serif";
+      c.fillText(f.txt, jx + 50, laneY(f.lane) - 40 - p * 24);
+      c.globalAlpha = 1;
+    }
+    // интерфейс
+    c.textAlign = "left"; c.fillStyle = "#f8eaee"; c.font = "600 18px Manrope,sans-serif";
+    c.fillText(score.toLocaleString("ru-RU"), 16, 28);
+    c.fillStyle = "rgba(255,255,255,.12)"; c.fillRect(16, 44, 140, 6);
+    c.fillStyle = hp > 30 ? ACC : "#ff3b3b"; c.fillRect(16, 44, 140 * Math.max(0, hp) / 100, 6);
+    if (combo > 2) {
+      c.textAlign = "center"; c.fillStyle = "rgba(248,234,238,.9)";
+      c.font = "600 30px 'Cormorant Garamond',serif"; c.fillText(combo, W / 2, H * .2);
+      c.font = "11px Manrope,sans-serif"; c.fillStyle = "#b9a0aa"; c.fillText("COMBO", W / 2, H * .2 + 22);
+    }
+    if (t < 8 * BEAT) {
+      const left = Math.ceil((8 * BEAT - t) / (2 * BEAT));
+      c.textAlign = "center"; c.fillStyle = ACC; c.font = "48px 'Cormorant Garamond',serif";
+      c.fillText(left > 3 ? "готова?" : left, W / 2, H * .3);
+      c.font = "13px Manrope,sans-serif"; c.fillStyle = "#b9a0aa";
+      c.fillText("верх экрана — прыжок, низ — удар по нижнему", W / 2, H * .3 + 34);
+    }
+    raf = requestAnimationFrame(loop);
+  }
+
+  function start(help = false) {
+    assist = help === true;
+    panel.classList.add("hidden");
+    try { actx && actx.close(); } catch (e) {}
+    actx = new (window.AudioContext || window.webkitAudioContext)();
+    notes = chart(); endAt = notes[notes.length - 1].t + 1.5;
+    score = combo = maxCombo = 0; hp = 100; st = { perfect: 0, great: 0, miss: 0, help: 0 }; fx = [];
+    t0 = actx.currentTime + .15; music(t0);
+    running = true; cancelAnimationFrame(raf); raf = requestAnimationFrame(loop);
+  }
+
+  function finish(cleared) {
+    running = false; cancelAnimationFrame(raf);
+    setTimeout(() => { try { actx.close(); } catch (e) {} actx = null; }, 600);
+    const total = notes.length, acc = (st.perfect + st.great * .6) / total;
+    const rank = assist ? "♡" : acc >= .95 ? "S" : acc >= .85 ? "A" : acc >= .7 ? "B" : "C";
+    if (!assist) { const best = Math.max(load("game-best", 0), score); store("game-best", best); }
+    const best = load("game-best", 0);
+    if (!cleared) {
+      panel.innerHTML = `
+        <div class="art" style="font-size:1rem;margin-bottom:14px">⠀(\\__/)⠀⠀(\\__/)
+⠀(•ㅅ•)⠀⠀(•ㅅ•)
+⠀/づ♡⊂ \\⠀/ ⊃ \\</div>
+        <h2>Не волнуйся,<br><em>я тебе помогу</em></h2>
+        <p>Сыграем вместе: я встану рядом и поймаю всё, что ты пропустишь</p>
+        <div class="row"><button id="gHelp">Играть вместе</button><button id="gAgain">Сама ещё раз</button></div>
+        <div class="row"><button id="gQuit" style="border-color:var(--line)">Выйти</button></div>`;
+      panel.classList.remove("hidden");
+      $("gHelp").onclick = () => start(true); $("gAgain").onclick = () => start(false); $("gQuit").onclick = close;
+      return;
+    }
+    panel.innerHTML = `
+      <div class="big">${rank}</div>
+      <h2>${assist ? "Мы прошли вместе" : "Пройдено"}</h2>
+      <p>${score.toLocaleString("ru-RU")} очков · комбо ${maxCombo} · точность ${Math.round(acc * 100)}%<br>
+         perfect ${st.perfect} · great ${st.great} · ${assist ? `я поймал ${st.help}` : `miss ${st.miss}`}<br>рекорд ${best.toLocaleString("ru-RU")}</p>
+      <p>${assist ? "Видишь, вдвоём всегда получается<br>" : ""}Когда-то я подарил одной незнакомой девушке маленький подарок<br>и никак не мог подумать, что этот подарок настолько изменит нашу жизнь &lt;3</p>
+      <div class="row"><button id="gAgain">Ещё раз</button><button id="gQuit">Выйти</button></div>`;
+    panel.classList.remove("hidden");
+    $("gAgain").onclick = () => start(assist); $("gQuit").onclick = close;
+  }
+
+  let musicWas = false;
+  function open() {
+    musicWas = wantMusic; if (wantMusic) musicOff();
+    size(); box.classList.remove("hidden");
+    const best = load("game-best", 0);
+    panel.innerHTML = `
+      <h2>Наша <em>игра</em></h2>
+      <p>В честь Muse Dash — первой игры, которую я тебе подарил</p>
+      <p>Сердечки летят по двум дорожкам<br>
+         Нажимай на верхнюю половину экрана, чтобы прыгнуть за верхним сердечком,<br>
+         и на нижнюю, чтобы поймать нижнее<br>
+         На клавиатуре: ↑ или F — верх, ↓ или J — низ</p>
+      ${best ? `<p>рекорд ${best.toLocaleString("ru-RU")}</p>` : ""}
+      <div class="row"><button id="gGo">Играть</button></div>`;
+    panel.classList.remove("hidden");
+    $("gGo").onclick = () => start(false);
+  }
+  function close() {
+    running = false; cancelAnimationFrame(raf);
+    try { actx && actx.close(); } catch (e) {} actx = null;
+    box.classList.add("hidden");
+    if (musicWas) musicOn();
+  }
+
+  cv.addEventListener("pointerdown", e => { e.preventDefault(); hit(e.clientY < H * .55 ? 0 : 1); });
+  addEventListener("keydown", e => {
+    if (box.classList.contains("hidden")) return;
+    const k = e.key.toLowerCase();
+    if (["arrowup", "f", "d", "а", "в"].includes(k)) { e.preventDefault(); hit(0); }
+    if (["arrowdown", "j", "k", " ", "о", "л"].includes(k)) { e.preventDefault(); hit(1); }
+    if (k === "escape") close();
+  });
+  addEventListener("resize", () => { if (!box.classList.contains("hidden")) size(); });
+  $("gExit").onclick = close;
+  return { open };
+})();
+tapCounter($("sub"), 3, () => { Game.open(); egg("game", "Нашла нашу игру"); });
+
+// сброс роз
+let rrArmed = false, rrTimer;
+$("resetRoses").onclick = () => {
+  if (!rrArmed) {
+    rrArmed = true; $("resetRoses").textContent = "точно сбросить?";
+    clearTimeout(rrTimer);
+    rrTimer = setTimeout(() => { rrArmed = false; $("resetRoses").textContent = "сбросить розы"; }, 3000);
+    return;
+  }
+  rrArmed = false; $("resetRoses").textContent = "сбросить розы";
+  opened = new Set(); store("roses-opened", []);
+  [...$("bouquet").children].forEach(el => el.classList.remove("open"));
+  updateCounter(); toast("Розы снова закрыты, можно открывать заново");
+};
+
+// подсказки и сброс пасхалок
+const HINTS = [
+  ["green", "Твоё прозвище любит, когда его зовут много раз подряд"],
+  ["hearts", "Планета ответит, если быть очень настойчивой"],
+  ["rose0", "В саду есть роза, которой нет в счёте"],
+  ["boop", "Кое-кто наверху конвертов любит, когда его трогают"],
+  ["choc", "Кое-кто внизу конвертов что-то держит в лапках"],
+  ["night", "Загляни сюда, когда тебе уже давно пора спать"],
+  ["game", "Расстояние между нами не просто цифры, постучи по нему"],
+];
+function showHints() {
+  $("hints").innerHTML = HINTS.map(([id, h], i) =>
+    `<li class="${eggs.has(id) ? "ok" : ""}"><i>${eggs.has(id) ? "✓" : i + 1}</i><span>${esc(h)}</span></li>`).join("");
+  $("hModal").classList.remove("hidden");
+}
+$("hintBtn").onclick = showHints;
+$("hClose").onclick = () => $("hModal").classList.add("hidden");
+$("hModal").onclick = e => { if (e.target.id === "hModal") $("hModal").classList.add("hidden"); };
+let resetArmed = false, resetTimer;
+$("resetBtn").onclick = () => {
+  if (!resetArmed) {
+    resetArmed = true; $("resetBtn").textContent = "точно сбросить?";
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => { resetArmed = false; $("resetBtn").textContent = "сбросить пасхалки"; }, 3000);
+    return;
+  }
+  resetArmed = false; $("resetBtn").textContent = "сбросить пасхалки";
+  eggs = new Set(); store("eggs-found", []);
+  document.documentElement.classList.remove("green"); ACC = "#ff6b86";
+  updateEggs(); toast("Пасхалки сброшены, ищи заново");
+};
+
+// пасхалка 5: 99 сердечек с глобуса (в sendHearts)
+// пасхалка 6: зайти ночью по её времени (в updateInfo)
+updateEggs();
 </script>
 </body>
 </html>
