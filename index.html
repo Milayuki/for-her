@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Для Крис</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Manrope:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="vendor/fonts.css" rel="stylesheet">
 <style>
   :root{--bg:#0b0610;--accent:#ff6b86;--text:#f8eaee;--muted:#b9a0aa;--line:rgba(255,107,134,.25)}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -320,8 +320,8 @@
   <button class="gx" id="gExit">×</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="vendor/d3.min.js"></script>
+<script src="vendor/topojson-client.min.js"></script>
 <script>
 // ===== настройки =====
 const HER_NAME   = "Кристине";
@@ -748,7 +748,7 @@ cv.addEventListener("click", () => sendHearts(3));
   if (!window.d3) { cv.style.display = "none"; $("ghint").style.display = "none"; return; }
   let land = null;
   try {
-    const w = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/land-110m.json").then(r => r.json());
+    const w = await fetch("vendor/land-110m.json").then(r => r.json());
     land = topojson.feature(w, w.objects.land);
   } catch (e) {}
   const proj = d3.geoOrthographic().clipAngle(90);
